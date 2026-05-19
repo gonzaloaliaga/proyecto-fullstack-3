@@ -1,41 +1,119 @@
 # Arquitectura del sistema
 ![Diagrama de Arquitectura](./docs/diagrama_sistema.jpg)
 
-## 🛠️ Stack Tecnológico
-* **Frontend:** React 19.2.5, Vite 8.0.10 y Tailwind CSS 4.3.0 como librerías core para la interfaz de usuario de tipo SPA.
-* **Backend Core:** Kotlin 2.2.21 y Spring Boot 4.0.5 ejecutándose sobre entornos JDK 21 virtuales para todos los servicios backend del ecosistema.
-* **Persistencia:** PostgreSQL 16 configurado en modalidad políglota para mantener un aislamiento estricto de esquemas por cada microservicio autónomo.
-* **Infraestructura:** Docker Engine y Docker Compose orquestando las redes bridge y los volúmenes persistentes locales del clúster.
+## Descripción
+Proyecto de microservicios con un BFF que centraliza autenticación y datos de perfil para el frontend.
 
-## 🏗️ Arquitectura y Funcionamiento Interno
-* **Frontend Service:** Aplicación cliente SPA que gestiona el estado global de la sesión del usuario mediante el patrón de diseño *Provider / Context* (`AuthContext`), exponiendo vistas dinámicas y componentes de control de acuerdo con el rol asignado a la identidad.
-* **BFF Service:** Gateway de acceso único que centraliza la seguridad perimetral mediante un `JwtValidationFilter` personalizado. Valida las firmas de los tokens entrantes, rechaza accesos no autorizados y actúa como un proxy inverso redirigiendo las llamadas válidas mediante `RestTemplate`.
-* **Auth Service:** Núcleo criptográfico del sistema. En lugar de firmas simétricas básicas, implementa criptografía asimétrica mediante algoritmos **RSA256** utilizando llaves públicas y privadas para expedir tokens JSON Web Tokens (JWT) robustos. Aplica el patrón de diseño *Strategy* (`AuthenticationStrategy`) para desacoplar las reglas de verificación de contraseñas y el patrón *Factory* para la estructuración unificada de payloads de respuesta.
-* **Profile Service:** Servicio a cargo del ciclo de vida y datos maestros de la información operacional de los perfiles de usuario. Aprovecha las bondades nativas de inmutabilidad de los Data Classes de Kotlin implementando el método `.copy()` dentro del endpoint REST de tipo `PATCH`, lo que permite realizar actualizaciones parciales precisas sobre los registros sin comprometer el estado original.
-* **Módulos Esqueleto (Evolutivos):** El diseño contempla los servicios `donations-service`, `inventory-service` y `logistic-service` estructurados conceptualmente con su base tecnológica lista para escalar mediante la adición de controladores y modelos JPA.
+## Arquitectura
+El proyecto está compuesto por los siguientes servicios:
+- `frontend-service`: aplicación React + Vite
+- `bff-service`: gateway que valida JWT y reenvía peticiones
+- `auth-service`: emite y valida JWT
+- `profile-service`: gestiona perfiles de usuario
+- `donations-service`: microservicio de donaciones (skeleton)
+- `inventory-service`: microservicio de inventario (skeleton)
+- `logistic-service`: microservicio de logística (skeleton)
+- Bases de datos PostgreSQL para cada microservicio
 
-## 📋 Infraestructura y Dependencias
-* **Estructura Interna del Mono-repositorio:** Cada componente opera dentro de un directorio propio y autónomo equipado con su documentación técnica de bajo nivel. Esto asegura un desacoplamiento a nivel de equipo y facilita el despliegue selectivo.
-* **Topología de Redes y Aislamiento de Capas:** El clúster se levanta bajo una red virtual aislada de tipo bridge llamada `donaton-network`. La persistencia utiliza **5 instancias PostgreSQL independientes** con volúmenes mapeados, asegurando que un microservicio jamás comparta bases de datos de forma directa con otro servicio, cumpliendo con los estándares de arquitectura desacoplada.
+## Tecnologías
+### Frontend
+- React 19.2.5
+- Vite 8.0.10
+- Tailwind CSS 4.3.0
+- Node.js
 
-## 🚀 Levantamiento del Entorno Local
-* **Compilación y Orquestación:** El clúster se compila utilizando una estrategia de construcción en múltiples etapas (*multi-stage builds*) e inicia de forma coordinada la totalidad de los microservicios y sus bases de datos asociadas mediante la ejecución del comando unificado `docker compose up --build` en la terminal raíz.
-* **Aplicación Cliente (Frontend):** Interfaz gráfica SPA construida en React y Vite que es expuesta y accesible localmente en la máquina host a través de la dirección de red `http://localhost:5173` una vez que el contenedor reporta un estado saludable.
-* **Gateway de Entrada (BFF):** Punto único de acceso perimetral expuesto en el entorno local a través de `http://localhost:8080`, encargado de centralizar, validar las credenciales y canalizar todo el tráfico hacia las redes internas de los microservicios.
+### Backend
+- Kotlin 2.2.21
+- Spring Boot 4.0.5
+- JDK 21
+- Spring Data JPA
+- JJWT
 
-## 🔄 Flujo de Comunicación del Sistema (Caso de Uso: Login)
-* **Formulario de Identidad:** El usuario introduce sus datos de inicio de sesión en la interfaz web interactiva provista por el componente `frontend-service`.
-* **Despacho del Payload:** El cliente envía de manera asíncrona una solicitud HTTP de tipo `POST /api/auth/login` dirigida exclusivamente hacia el puerto expuesto del `bff-service`.
-* **Proxy de Red Virtual:** El `bff-service` actúa como proxy perimetral y delega la petición invocando al servicio de autenticación mediante la resolución DNS interna de la red de Docker en `http://auth-service:8081`.
-* **Criptografía y Firma:** El `auth-service` verifica las credenciales usando JPA en `auth_db` y, si son correctas, genera un token **JWT** firmado digitalmente con su llave privada RSA, retornando el payload hacia el frontend a través del BFF.
-* **Sesión y Autorización:** El cliente almacena el token en su `localStorage`. En cualquier petición de negocio posterior, el frontend adjunta la cabecera `Authorization: Bearer <token>`, permitiendo al BFF interceptar el llamado, extraer el ID usando la llave pública RSA y autorizar la comunicación con el `profile-service` en el puerto interno `8082`.
+### Infraestructura
+- Docker
+- Docker Compose
+- PostgreSQL 16
 
-## ⚙️ Variables de Entorno Clave
-```env
-JWT_PRIVATE_KEY=${JWT_PRIVATE_KEY}
-JWT_PUBLIC_KEY=${JWT_PUBLIC_KEY}
-SERVICES_AUTH_URL=http://auth-service:8081
-SERVICES_PROFILE_URL=http://profile-service:8082
-SERVICES_DONATIONS_URL=http://donations-service:8083
-SERVICES_INVENTORY_URL=http://inventory-service:8084
-SERVICES_LOGISTIC_URL=http://logistic-service:8085
+## Arquetipos de Arquitectura
+Los arquetipos son patrones estructurales a nivel de arquitectura del sistema:
+
+- **Microservicios**: servicios independientes por responsabilidad (`auth-service`, `profile-service`, `donations-service`, `inventory-service`, `logistic-service`) con despliegue y base de datos aislados en Docker Compose.
+  
+- **BFF (Backend For Frontend)**: puerta única del frontend (`bff-service/`) que centraliza autorización con JWT y actúa como gateway para reenviar peticiones a los microservicios internos.
+
+## Patrones de Diseño
+Los patrones son soluciones específicas implementadas en el código:
+
+- **JWT Authentication**: flujo stateless donde el token portador se valida en el BFF mediante `JwtValidationFilter` y se emite en `auth-service` mediante `JwtService`.
+
+- **Repository Pattern**: acceso a datos abstracto a través de interfaces `JpaRepository`. Implementado en: `auth-service` y `profile-service`.
+
+- **Strategy Pattern**: autenticación configurable mediante estrategias de validación. Definido en `auth-service` con implementaciones `SimplePasswordStrategy` y `EnhancedSecurityStrategy` que permiten cambiar el método de autenticación sin modificar el controlador.
+
+- **Factory Pattern**: creación centralizada de respuestas de autenticación en `auth-service`, usado por `AuthController` para construir `AuthResponse` con los datos del usuario y token.
+
+- **Provider / Context Pattern**: gestión de estado de sesión en React mediante `AuthContext`. Proporciona `AuthProvider` y hook `useAuth()` para acceder al estado de autenticación en toda la aplicación sin prop drilling.
+
+## Flujo de autenticación
+1. El frontend envía credenciales a `POST http://localhost:8080/api/auth/login`
+2. El `bff-service` reenvía la solicitud a `auth-service`
+3. `auth-service` genera un JWT con `id` y `username`
+4. El frontend guarda el token en `localStorage`
+5. Las peticiones posteriores al BFF incluyen `Authorization: Bearer <token>`
+6. El BFF valida el JWT antes de reenviar a los servicios internos
+
+## Servicios principales y endpoints expuestos
+### `auth-service`
+- `POST /api/auth/login`
+- `POST /api/auth/update-username`
+
+### `bff-service`
+- `POST /api/auth/login`
+- `POST /api/auth/update-username`
+- `GET /api/profile/{userId}`
+- `PATCH /api/profile/{userId}`
+
+### `profile-service`
+- `GET /api/profile/{userId}`
+- `PATCH /api/profile/{userId}`
+
+## Ejecución con Docker Compose
+```bash
+docker compose up --build
+```
+
+Una vez que se levanten los servicios:
+- Frontend: `http://localhost:5173`
+- BFF: `http://localhost:8080`
+
+## Ejecución del proyecto
+El proyecto completo debe levantarse con Docker Compose, ya que los servicios con bases de datos dependen de secrets y credenciales que no están preconfiguradas para ejecución local directa.
+
+### Frontend local
+El frontend puede ejecutarse localmente para desarrollo, pero para una integración completa se requiere que el BFF y los servicios backend estén levantados con Docker Compose.
+```bash
+cd frontend-service
+npm install
+npm run dev
+```
+
+### Backend completo con Docker Compose
+```bash
+docker compose up --build
+```
+
+## Variables de entorno clave
+- `JWT_SECRET`
+- `SPRING_DATASOURCE_URL`
+- `SPRING_DATASOURCE_DRIVER_CLASS_NAME`
+- `SPRING_DATASOURCE_USERNAME`
+- `SPRING_DATASOURCE_PASSWORD`
+- `SERVICES_AUTH_URL`
+- `SERVICES_PROFILE_URL`
+
+## Notas
+- El sistema usa PostgreSQL 16 en Docker Compose.
+- El frontend consume el BFF en `http://localhost:8080`.
+- Los servicios con base de datos requieren los secrets y variables de entorno definidos en `docker-compose.yml`.
+- El despliegue completo debe ejecutarse con `docker compose up --build`.
+- Los microservicios `donations-service`, `inventory-service` y `logistic-service` están actualmente como esqueleto y pueden ampliarse con controladores REST adicionales.
