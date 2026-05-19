@@ -2,9 +2,9 @@
 
 ## Índice
 1. [Contexto](#contexto)
-2. [Problemática y necesidades](problemática-y-necesidades)
-3. [Levantamiento de requerimientos](levantamiento-de-requerimientos)
-4. [Casos de Uso](casos-de-uso)
+2. [Problemática y necesidades](#problemática-y-necesidades)
+3. [Levantamiento de requerimientos](#levantamiento-de-requerimientos)
+4. [Casos de Uso](#casos-de-uso)
 5. [Propuesta de Solución y Arquitectura](#propuesta-de-solución-y-arquitectura)
 6. [Consideraciones éticas](#consideraciones-éticas)
 7. [Conclusión](#conclusión)
