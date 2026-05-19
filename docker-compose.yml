@@ -98,6 +98,10 @@ services:
       - SPRING_DATASOURCE_USERNAME=user
       - SPRING_DATASOURCE_PASSWORD=password
 
+# ==============
+# BASES DE DATOS
+# ==============
+
   auth-db:
     image: postgres:16
     container_name: auth-db
