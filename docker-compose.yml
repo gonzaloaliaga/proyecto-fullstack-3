@@ -33,7 +33,7 @@ services:
 
   auth-service:
     build: ./backend/ms-auth
-    container_name: ams-auth
+    container_name: ms-auth
     networks:
       - donaton-network
     depends_on:
