@@ -21,7 +21,7 @@ class GlobalExceptionHandler {
     }
 }
 
-/* DTO para dar formato al JSON de error que verá el cliente */
+/* DTO para dar formato al JSON al error */
 data class ErrorResponse(
  */
     val status: Int,
