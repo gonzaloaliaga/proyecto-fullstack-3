@@ -7,7 +7,7 @@ interface AuthResponse {
     token: string;
 }
 
-const authService = {
+const authClient = {
     // Lógica de Login: Almacena el token si la respuesta es exitosa
     login: async (username: string, password: string): Promise<AuthResponse> => {
         const response = await fetch(`${API_BASE_URL}/login`, {
@@ -52,4 +52,4 @@ const authService = {
     }
 };
 
-export default authService;
+export default authClient;

@@ -1,6 +1,6 @@
 const API_BASE_URL = 'http://localhost:8080/api/profile';
 
-const profileService = {
+const profileClient = {
     getUserProfile: async (userId: number | string) => {
         const token = localStorage.getItem('donaton_token');
 
@@ -51,4 +51,4 @@ const profileService = {
     }
 };
 
-export default profileService;
+export default profileClient;

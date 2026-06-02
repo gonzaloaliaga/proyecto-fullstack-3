@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import { createContext, useState, useEffect } from 'react';
-import profileService from '../services/profileService';
-import authService from '../services/authService';
+import profileClient from '../clients/profileClient';
+import authClient from '../clients/authclient';
 
 export const AuthContext = createContext();
 
@@ -46,7 +46,7 @@ export const AuthProvider = ({ children }) => {
         setLoading(true);
         setError(null);
         try {
-            const profileData = await profileService.getUserProfile(userId);
+            const profileData = await profileClient.getUserProfile(userId);
             setProfile(profileData);
         } catch (err) {
             setError(err.message || "Error al cargar el perfil");
@@ -60,8 +60,8 @@ export const AuthProvider = ({ children }) => {
         setLoading(true);
         setError(null);
         try {
-            const userData = await authService.login(username, password);
-            // El authService ya guarda el token en localStorage según lo implementamos antes
+            const userData = await authClient.login(username, password);
+            // El authClient ya guarda el token en localStorage según lo implementamos antes
             setUser({ id: userData.id, username: userData.username }); // Solo guardar id y username en el estado
             return userData;
         } catch (err) {
@@ -81,12 +81,12 @@ export const AuthProvider = ({ children }) => {
         setProfile(null);
         setError(null);
         // Limpia persistencia física
-        authService.logout(); 
+        authClient.logout(); 
     };
 
     const updateProfile = async (updatedData) => {
         if (!user) throw new Error('No hay usuario logueado');
-        const updatedProfile = await profileService.patchUserProfile(user.id, updatedData);
+        const updatedProfile = await profileClient.patchUserProfile(user.id, updatedData);
         setProfile(updatedProfile);
         return updatedProfile;
     };
@@ -94,7 +94,7 @@ export const AuthProvider = ({ children }) => {
     const updateUsername = async (newUsername) => {
         if (!user) throw new Error('No hay usuario logueado');
         
-        await authService.updateUsername(newUsername);
+        await authClient.updateUsername(newUsername);
         
         const updatedUser = { ...user, username: newUsername };
         setUser(updatedUser);
