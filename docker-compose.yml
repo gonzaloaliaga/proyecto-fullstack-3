@@ -112,7 +112,7 @@ services:
 
   profile-db:
     image: postgres:16
-    container_name: ms-profile-db
+    container_name: profile-db
     environment:
       - POSTGRES_DB=ms-profile-db
       - POSTGRES_USER=user
@@ -124,7 +124,7 @@ services:
 
   donations-db:
     image: postgres:16
-    container_name: ms-donation-db
+    container_name: donation-db
     environment:
       - POSTGRES_DB=ms-donation-db
       - POSTGRES_USER=user
@@ -136,7 +136,7 @@ services:
 
   inventory-db:
     image: postgres:16
-    container_name: ms-inventory-db
+    container_name: inventory-db
     environment:
       - POSTGRES_DB=ms-inventory-db
       - POSTGRES_USER=user
@@ -148,7 +148,7 @@ services:
 
   logistic-db:
     image: postgres:16
-    container_name: ms-logistic-db
+    container_name: logistic-db
     environment:
       - POSTGRES_DB=ms-logistic-db
       - POSTGRES_USER=user
