@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import { Role } from '../../types/user.types';
+import type { Role } from '../../types/user.types';
 import { authenticateMockUser } from './index.utils';
 import './index.css';
 

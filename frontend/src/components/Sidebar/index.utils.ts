@@ -1,4 +1,4 @@
-import { Role, MenuItem } from '../../types/user.types';
+import type { Role, MenuItem } from '../../types/user.types';
 
 /**
  *  Definimos todas las opciones del menú de la plataforma

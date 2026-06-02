@@ -1,4 +1,4 @@
-import { Role, User } from '../../types/user.types';
+import type { Role, User } from '../../types/user.types';
 
 interface LoginMockResult {
   success: boolean;

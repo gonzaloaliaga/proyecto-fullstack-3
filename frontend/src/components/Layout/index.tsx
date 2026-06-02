@@ -1,6 +1,6 @@
 import { Outlet, useLocation } from 'react-router-dom';
 import { Sidebar } from '../Sidebar';
-import { Role } from '../../types/user.types';
+import type { Role } from '../../types/user.types';
 import { getHeaderTitle } from './index.utils';
 import './index.css';
 

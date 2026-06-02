@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { Role } from '../../types/user.types';
+import type { Role } from '../../types/user.types';
 import { getMenuByRole } from './index.utils';
 import './index.css';
 

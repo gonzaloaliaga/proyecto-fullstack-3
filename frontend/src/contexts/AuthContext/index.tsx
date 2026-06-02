@@ -1,5 +1,6 @@
-import { createContext, useContext, useState, ReactNode } from 'react';
-import { User, Role } from '../../types/user.types';
+import { createContext, useContext, useState } from 'react';
+import type { ReactNode } from 'react';
+import type { User } from '../../types/user.types';
 import { saveSession, clearSession, getStoredUser } from './index.utils';
 
 /**
@@ -21,9 +22,6 @@ const AuthContext = createContext<AuthContextProps | undefined>(undefined);
  * Proveedor del contexto
  */
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  /**
-   * Inicializamos el estado leyendo del localStorage por si el usuario recargó la página
-   */
   const [user, setUser] = useState<User | null>(getStoredUser());
 
   const login = (userData: User, token: string) => {
@@ -48,9 +46,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-/**
- * Hook personalizado para usar el AuthContext en cualquier componente
- */
 export const useAuth = (): AuthContextProps => {
   const context = useContext(AuthContext);
   if (!context) {

@@ -16,7 +16,6 @@ function AppRoutes() {
   if (!isAuthenticated || !user) {
     return (
       <Routes>
-        <option value=""></option>
         <Route path="/login" element={<Login />} />
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>

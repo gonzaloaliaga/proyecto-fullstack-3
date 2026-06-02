@@ -1,4 +1,4 @@
-import { User } from '../../types/user.types';
+import type { User } from '../../types/user.types';
 
 const USER_STORAGE_KEY = 'donaton_user';
 const TOKEN_STORAGE_KEY = 'donaton_token';
