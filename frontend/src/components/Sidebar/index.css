@@ -1,0 +1,9 @@
+.sidebar-transition {
+  transition: all 0.3s ease-in-out;
+}
+
+.nav-item-active {
+  background-color: var(--color-blue-600, #2563eb);
+  color: white;
+  font-weight: 600;
+}
