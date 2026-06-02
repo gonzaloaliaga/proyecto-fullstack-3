@@ -8,7 +8,7 @@ services:
     networks:
       - donaton-network
     depends_on:
-      - bff-service
+      - bff
 
   bff-service:
     build: ./bff
@@ -41,7 +41,7 @@ services:
     environment:
       - JWT_PRIVATE_KEY=${JWT_PRIVATE_KEY}
       - JWT_PUBLIC_KEY=${JWT_PUBLIC_KEY}
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://auth-db:5432/auth_db
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://auth-db:5432/auth-db
       - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
       - SPRING_DATASOURCE_USERNAME=user
       - SPRING_DATASOURCE_PASSWORD=password
@@ -54,7 +54,7 @@ services:
     depends_on:
       - profile-db
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://profile-db:5432/profile_db
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://profile-db:5432/profile-db
       - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
       - SPRING_DATASOURCE_USERNAME=user
       - SPRING_DATASOURCE_PASSWORD=password
@@ -67,7 +67,7 @@ services:
     depends_on:
       - donations-db
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://donations-db:5432/donations_db
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://donations-db:5432/donations-db
       - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
       - SPRING_DATASOURCE_USERNAME=user
       - SPRING_DATASOURCE_PASSWORD=password
@@ -80,7 +80,7 @@ services:
     depends_on:
       - inventory-db
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://inventory-db:5432/inventory_db
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://inventory-db:5432/inventory-db
       - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
       - SPRING_DATASOURCE_USERNAME=user
       - SPRING_DATASOURCE_PASSWORD=password
@@ -93,7 +93,7 @@ services:
     depends_on:
       - logistic-db
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://logistic-db:5432/logistic_db
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://logistic-db:5432/logistic-db
       - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
       - SPRING_DATASOURCE_USERNAME=user
       - SPRING_DATASOURCE_PASSWORD=password
@@ -122,7 +122,7 @@ services:
     volumes:
       - profile-db-data:/var/lib/postgresql/data
 
-  donations-db:
+  donation-db:
     image: postgres:16
     container_name: donation-db
     environment:
@@ -132,7 +132,7 @@ services:
     networks:
       - donaton-network
     volumes:
-      - donations-db-data:/var/lib/postgresql/data
+      - donation-db-data:/var/lib/postgresql/data
 
   inventory-db:
     image: postgres:16
@@ -165,6 +165,6 @@ networks:
 volumes:
   auth-db-data:
   profile-db-data:
-  donations-db-data:
+  donation-db-data:
   inventory-db-data:
   logistic-db-data:
