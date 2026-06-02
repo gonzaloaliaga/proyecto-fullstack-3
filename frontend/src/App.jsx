@@ -1,7 +1,7 @@
 import { useContext } from 'react';
-import { AuthProvider, AuthContext } from './context/AuthContext';
-import Login from './components/Login';
-import Profile from './components/Profile';
+import { AuthProvider, AuthContext } from './contexts/AuthContext';
+import Login from './pages/Login';
+import Profile from './pages/Profile';
 
 function Content() {
     const { user } = useContext(AuthContext);

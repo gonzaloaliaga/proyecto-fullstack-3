@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import { createContext, useState, useEffect } from 'react';
 import profileClient from '../clients/profileClient';
-import authClient from '../clients/authclient';
+import authClient from '../clients/authClient';
 
 export const AuthContext = createContext();
 
