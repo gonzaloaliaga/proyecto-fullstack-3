@@ -1,5 +1,5 @@
-CREATE DATABASE auth_db;
-CREATE DATABASE profile_db;
-CREATE DATABASE donations_db;
-CREATE DATABASE inventory_db;
-CREATE DATABASE logistic_db;
+CREATE DATABASE auth-db;
+CREATE DATABASE profile-db;
+CREATE DATABASE donations-db;
+CREATE DATABASE inventory-db;
+CREATE DATABASE logistic-db;

@@ -1,8 +1,8 @@
 services:
 
   frontend-service:
-    build: ./frontend-service
-    container_name: frontend-service
+    build: ./frontend
+    container_name: frontend
     ports:
       - "5173:80"
     networks:
@@ -11,8 +11,8 @@ services:
       - bff-service
 
   bff-service:
-    build: ./bff-service
-    container_name: bff-service
+    build: ./bff
+    container_name: bff
     ports:
       - "8080:8080"
     networks:
@@ -32,8 +32,8 @@ services:
       - SERVICES_LOGISTIC_URL=http://logistic-service:8085
 
   auth-service:
-    build: ./auth-service
-    container_name: auth-service
+    build: ./backend/ms-auth
+    container_name: ams-auth
     networks:
       - donaton-network
     depends_on:
@@ -47,8 +47,8 @@ services:
       - SPRING_DATASOURCE_PASSWORD=password
 
   profile-service:
-    build: ./profile-service
-    container_name: profile-service
+    build: ./backend/ms-profile
+    container_name: ms-profile
     networks:
       - donaton-network
     depends_on:
@@ -60,8 +60,8 @@ services:
       - SPRING_DATASOURCE_PASSWORD=password
 
   donations-service:
-    build: ./donations-service
-    container_name: donations-service
+    build: ./backend/ms-donation
+    container_name: ms-donation
     networks:
       - donaton-network
     depends_on:
@@ -73,8 +73,8 @@ services:
       - SPRING_DATASOURCE_PASSWORD=password
 
   inventory-service:
-    build: ./inventory-service
-    container_name: inventory-service
+    build: ./backend/ms-inventory
+    container_name: ms-inventory
     networks:
       - donaton-network
     depends_on:
@@ -86,8 +86,8 @@ services:
       - SPRING_DATASOURCE_PASSWORD=password
 
   logistic-service:
-    build: ./logistic-service
-    container_name: logistic-service
+    build: ./backend/ms-logistic
+    container_name: ms-logistic
     networks:
       - donaton-network
     depends_on:
@@ -102,7 +102,7 @@ services:
     image: postgres:16
     container_name: auth-db
     environment:
-      - POSTGRES_DB=auth_db
+      - POSTGRES_DB=ms-auth-db
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=password
     networks:
@@ -112,9 +112,9 @@ services:
 
   profile-db:
     image: postgres:16
-    container_name: profile-db
+    container_name: ms-profile-db
     environment:
-      - POSTGRES_DB=profile_db
+      - POSTGRES_DB=ms-profile-db
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=password
     networks:
@@ -124,9 +124,9 @@ services:
 
   donations-db:
     image: postgres:16
-    container_name: donations-db
+    container_name: ms-donation-db
     environment:
-      - POSTGRES_DB=donations_db
+      - POSTGRES_DB=ms-donation-db
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=password
     networks:
@@ -136,9 +136,9 @@ services:
 
   inventory-db:
     image: postgres:16
-    container_name: inventory-db
+    container_name: ms-inventory-db
     environment:
-      - POSTGRES_DB=inventory_db
+      - POSTGRES_DB=ms-inventory-db
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=password
     networks:
@@ -148,9 +148,9 @@ services:
 
   logistic-db:
     image: postgres:16
-    container_name: logistic-db
+    container_name: ms-logistic-db
     environment:
-      - POSTGRES_DB=logistic_db
+      - POSTGRES_DB=ms-logistic-db
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=password
     networks:
