@@ -1,12 +1,12 @@
 import { useContext, useState, useEffect } from 'react';
 import { AuthContext } from '../context/AuthContext';
-import MainLayout from './MainLayout';
+import MainLayout from '../components/MainLayout';
 
 // DASHBOARDS
-import { AdminDashboard } from './dashboards/AdminDashboard';
-import { LogisticDashboard } from './dashboards/LogisticDashboard';
-import { VolunteerDashboard } from './dashboards/VolunteerDashboard';
-import { DonorDashboard } from './dashboards/DonorDashboard';
+import { AdminDashboard } from '../components/dashboards/AdminDashboard';
+import { LogisticDashboard } from '../components/dashboards/LogisticDashboard';
+import { VolunteerDashboard } from '../components/dashboards/VolunteerDashboard';
+import { DonorDashboard } from '../components/dashboards/DonorDashboard';
 
 const ROLE_STRATEGIES = {
     ADMIN: <AdminDashboard />,
