@@ -3,6 +3,11 @@ package cl.donaton.donaton.service
 import cl.donaton.donaton.dto.UpdateProfileDto
 import org.springframework.stereotype.Service
 import org.springframework.data.repository.findByIdOrNull
+import org.springframework.transaction.annotation.Transactional
+
+import cl.donaton.donaton.model.Profile
+import cl.donaton.donaton.repository.ProfileRepository
+import cl.donaton.donaton.exception.NotFoundException
 
 @Service
 class ProfileService (
@@ -12,14 +17,14 @@ class ProfileService (
     @Transactional(readOnly = true)
     fun getUserProfile(userId: Long): Profile {
         return profileRepository.findByIdOrNull(userId)
-            ?: throw UserNotFoundException("Usuario no encontrado")
+            ?: throw NotFoundException("Usuario no encontrado")
     }
 
     @Transactional
-    fun updateUserProfile(userId: Long, dto: UpdateProfileDto) {
+    fun updateUserProfile(userId: Long, dto: UpdateProfileDto) : Profile {
         /* 1. Buscar el perfil existente o lanzar excepción si no se encuentra */
         val existingProfile = profileRepository.findByIdOrNull(userId)
-            ?: throw UserNotFoundException("Usuario no encontrado")
+            ?: throw NotFoundException("Usuario no encontrado")
 
         /* 2. Fusionar datos: Si el DTO trae un valor, se usa; si es null, se mantiene el actual */
         val updatedProfile = existingProfile.copy(
@@ -33,5 +38,3 @@ class ProfileService (
         return profileRepository.save(updatedProfile)
     }
 }
-
-class UserNotFoundException(message: String) : RuntimeException(message)

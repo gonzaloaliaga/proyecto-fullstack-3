@@ -3,6 +3,10 @@ package cl.donaton.donaton.controller
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
+import cl.donaton.donaton.model.Profile
+import cl.donaton.donaton.service.ProfileService
+import cl.donaton.donaton.dto.UpdateProfileDto
+
 @RestController
 @RequestMapping("/api/profile")
 class ProfileController(

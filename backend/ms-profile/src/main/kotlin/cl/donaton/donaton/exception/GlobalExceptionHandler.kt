@@ -9,15 +9,19 @@ import java.time.LocalDateTime
 @RestControllerAdvice
 class GlobalExceptionHandler {
 
-    @ExceptionHandler(UserNotFoundException::class)
-    fun handleUserNotFoundException(ex: UserNotFoundException): ResponseEntity<ErrorResponse> {
-        val errorBody = ErrorResponse(
-            status = HttpStatus.NOT_FOUND.value(),
-            error = HttpStatus.NOT_FOUND.reasonPhrase,
-            message = ex.message ?: "Recurso no encontrado",
+    @ExceptionHandler(NotFoundException::class)
+    fun handleNotFoundException(ex: NotFoundException): ResponseEntity<ErrorResponse> {
+        return buildResponse(HttpStatus.NOT_FOUND, ex.message ?: "Recurso no encontrado")
+    }
+
+    private fun buildResponse(status: HttpStatus, message: String): ResponseEntity<ErrorResponseBody> {
+        val body = ErrorResponseBody(
+            status = status.value(),
+            error = status.reasonPhrase,
+            message = message,
             timestamp = LocalDateTime.now()
         )
-        return ResponseEntity(errorBody, HttpStatus.NOT_FOUND)
+        return ResponseEntity(body, status)
     }
 }
 
