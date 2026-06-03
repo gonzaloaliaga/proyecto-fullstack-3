@@ -1,6 +1,6 @@
 services:
 
-  frontend-service:
+  frontend:
     build: ./frontend
     container_name: frontend
     ports:
@@ -10,7 +10,7 @@ services:
     depends_on:
       - bff
 
-  bff-service:
+  bff:
     build: ./bff
     container_name: bff
     ports:
@@ -18,20 +18,20 @@ services:
     networks:
       - donaton-network
     depends_on:
-      - auth-service
-      - profile-service
-      - donations-service
-      - inventory-service
-      - logistic-service
+      - ms-auth
+      - ms-profile
+      - ms-donation
+      - ms-inventory
+      - ms-logistic
     environment:
       - JWT_PUBLIC_KEY=${JWT_PUBLIC_KEY}
-      - SERVICES_AUTH_URL=http://auth-service:8081
-      - SERVICES_PROFILE_URL=http://profile-service:8082
-      - SERVICES_DONATIONS_URL=http://donations-service:8083
-      - SERVICES_INVENTORY_URL=http://inventory-service:8084
-      - SERVICES_LOGISTIC_URL=http://logistic-service:8085
+      - SERVICES_AUTH_URL=http://ms-auth:8081
+      - SERVICES_PROFILE_URL=http://ms-profile:8082
+      - SERVICES_DONATIONS_URL=http://ms-donation:8083
+      - SERVICES_INVENTORY_URL=http://ms-inventory:8084
+      - SERVICES_LOGISTIC_URL=http://ms-logistic:8085
 
-  auth-service:
+  ms-auth:
     build: ./backend/ms-auth
     container_name: ms-auth
     networks:
@@ -46,7 +46,7 @@ services:
       - SPRING_DATASOURCE_USERNAME=user
       - SPRING_DATASOURCE_PASSWORD=password
 
-  profile-service:
+  ms-profile:
     build: ./backend/ms-profile
     container_name: ms-profile
     networks:
@@ -59,20 +59,20 @@ services:
       - SPRING_DATASOURCE_USERNAME=user
       - SPRING_DATASOURCE_PASSWORD=password
 
-  donations-service:
+  ms-donation:
     build: ./backend/ms-donation
     container_name: ms-donation
     networks:
       - donaton-network
     depends_on:
-      - donations-db
+      - donation-db
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://donations-db:5432/donations-db
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://donation-db:5432/donation-db
       - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
       - SPRING_DATASOURCE_USERNAME=user
       - SPRING_DATASOURCE_PASSWORD=password
 
-  inventory-service:
+  ms-inventory:
     build: ./backend/ms-inventory
     container_name: ms-inventory
     networks:
@@ -85,7 +85,7 @@ services:
       - SPRING_DATASOURCE_USERNAME=user
       - SPRING_DATASOURCE_PASSWORD=password
 
-  logistic-service:
+  ms-logistic:
     build: ./backend/ms-logistic
     container_name: ms-logistic
     networks:
