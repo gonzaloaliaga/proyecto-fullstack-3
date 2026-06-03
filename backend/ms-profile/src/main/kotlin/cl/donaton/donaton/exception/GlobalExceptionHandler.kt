@@ -14,8 +14,8 @@ class GlobalExceptionHandler {
         return buildResponse(HttpStatus.NOT_FOUND, ex.message ?: "Recurso no encontrado")
     }
 
-    private fun buildResponse(status: HttpStatus, message: String): ResponseEntity<ErrorResponseBody> {
-        val body = ErrorResponseBody(
+    private fun buildResponse(status: HttpStatus, message: String): ResponseEntity<ErrorResponse> {
+        val body = ErrorResponse(
             status = status.value(),
             error = status.reasonPhrase,
             message = message,
