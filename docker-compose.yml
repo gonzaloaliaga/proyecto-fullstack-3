@@ -37,7 +37,8 @@ services:
     networks:
       - donaton-network
     depends_on:
-      - auth-db
+      auth-db:
+        condition: service_healthy
     environment:
       - JWT_PRIVATE_KEY=${JWT_PRIVATE_KEY}
       - JWT_PUBLIC_KEY=${JWT_PUBLIC_KEY}
@@ -52,7 +53,8 @@ services:
     networks:
       - donaton-network
     depends_on:
-      - profile-db
+      profile-db:
+        condition: service_healthy
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://profile-db:5432/profile-db
       - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
@@ -65,7 +67,8 @@ services:
     networks:
       - donaton-network
     depends_on:
-      - donation-db
+      donation-db:
+        condition: service_healthy
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://donation-db:5432/donation-db
       - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
@@ -78,7 +81,8 @@ services:
     networks:
       - donaton-network
     depends_on:
-      - inventory-db
+      inventory-db:
+        condition: service_healthy
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://inventory-db:5432/inventory-db
       - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
@@ -91,7 +95,8 @@ services:
     networks:
       - donaton-network
     depends_on:
-      - logistic-db
+      logistic-db:
+        condition: service_healthy
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://logistic-db:5432/logistic-db
       - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
@@ -102,61 +107,86 @@ services:
     image: postgres:16
     container_name: auth-db
     environment:
-      - POSTGRES_DB=ms-auth-db
+      - POSTGRES_DB=auth-db
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=password
     networks:
       - donaton-network
     volumes:
       - auth-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d auth-db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   profile-db:
     image: postgres:16
     container_name: profile-db
     environment:
-      - POSTGRES_DB=ms-profile-db
+      - POSTGRES_DB=profile-db
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=password
     networks:
       - donaton-network
     volumes:
       - profile-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d profile-db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   donation-db:
     image: postgres:16
     container_name: donation-db
     environment:
-      - POSTGRES_DB=ms-donation-db
+      - POSTGRES_DB=donation-db
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=password
     networks:
       - donaton-network
     volumes:
       - donation-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d donation-db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   inventory-db:
     image: postgres:16
     container_name: inventory-db
     environment:
-      - POSTGRES_DB=ms-inventory-db
+      - POSTGRES_DB=inventory-db
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=password
     networks:
       - donaton-network
     volumes:
       - inventory-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d inventory-db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   logistic-db:
     image: postgres:16
     container_name: logistic-db
     environment:
-      - POSTGRES_DB=ms-logistic-db
+      - POSTGRES_DB=logistic-db
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=password
     networks:
       - donaton-network
     volumes:
       - logistic-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d logistic-db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
 networks:
   donaton-network:

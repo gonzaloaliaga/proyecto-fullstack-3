@@ -9,22 +9,29 @@ import org.springframework.web.client.HttpStatusCodeException
 import org.springframework.web.client.RestTemplate
 
 @Component
-class AuthClient(
-    @Value("\${services.auth.url}") private val authServiceUrl: String
+class ProfileClient(
+    @Value("\${services.profile.url}") private val profileServiceUrl: String
 ) {
     private val restTemplate = RestTemplate()
     private val objectMapper = ObjectMapper()
 
-    fun forwardLogin(credentials: JsonNode): ResponseEntity<JsonNode> {
-        val targetUrl = "$authServiceUrl/api/auth/login"
-        val headers = HttpHeaders().apply { contentType = MediaType.APPLICATION_JSON }
-        val request = HttpEntity(credentials, headers)
+    /* Buildear request de GET UserProfile */
+    fun fetchUserProfile(userId: Long, authHeader: String?): ResponseEntity<JsonNode> {
+        val targetUrl = "$profileServiceUrl/api/profile/$userId"
+        val headers = HttpHeaders().apply {
+            contentType = MediaType.APPLICATION_JSON
+            if (!authHeader.isNullOrBlank()) {
+                set("Authorization", authHeader)
+            }
+        }
+        val request = HttpEntity(null, headers)
 
-        return executeRequest(targetUrl, HttpMethod.POST, request)
+        return executeRequest(targetUrl, HttpMethod.GET, request)
     }
 
-    fun forwardUpdateUsername(authHeader: String?, body: JsonNode): ResponseEntity<JsonNode> {
-        val targetUrl = "$authServiceUrl/api/auth/update-username"
+    /* Buildear request de PUT UpdateProfile */
+    fun forwardUpdateProfile(userId: Long, authHeader: String?, body: JsonNode): ResponseEntity<JsonNode> {
+        val targetUrl = "$profileServiceUrl/api/profile/$userId"
         val headers = HttpHeaders().apply {
             contentType = MediaType.APPLICATION_JSON
             if (!authHeader.isNullOrBlank()) {
@@ -33,12 +40,11 @@ class AuthClient(
         }
         val request = HttpEntity(body, headers)
 
-        return executeRequest(targetUrl, HttpMethod.POST, request)
+        return executeRequest(targetUrl, HttpMethod.PUT, request)
     }
 
-    /* Centraliza la ejecución y el tipado seguro con JsonNode */
-    private fun executeRequest(url: String, method: HttpMethod, request: HttpEntity<*>):
-            ResponseEntity<JsonNode> {
+    /* Centraliza la ejecución y el tipado seguro con JsonNOde */
+    private fun executeRequest(url: String, method: HttpMethod, request: HttpEntity<*>): ResponseEntity<JsonNode> {
         return try {
             restTemplate.exchange(url, method, request, JsonNode::class.java)
         } catch (ex: HttpStatusCodeException) {
