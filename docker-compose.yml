@@ -11,7 +11,7 @@ services:
       - bff
 
   bff:
-    build: ./bff
+    build: ./backend/bff
     container_name: bff
     ports:
       - "8080:8080"
