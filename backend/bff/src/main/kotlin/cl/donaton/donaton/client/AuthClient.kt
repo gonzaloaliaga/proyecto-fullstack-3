@@ -1,7 +1,5 @@
 package cl.donaton.donaton.client
 
-import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.*
 import org.springframework.stereotype.Component
@@ -13,17 +11,16 @@ class AuthClient(
     @Value("\${services.auth.url}") private val authServiceUrl: String
 ) {
     private val restTemplate = RestTemplate()
-    private val objectMapper = ObjectMapper()
 
-    fun forwardLogin(credentials: JsonNode): ResponseEntity<JsonNode> {
+    fun forwardLogin(body: String): ResponseEntity<String> {
         val targetUrl = "$authServiceUrl/api/auth/login"
         val headers = HttpHeaders().apply { contentType = MediaType.APPLICATION_JSON }
-        val request = HttpEntity(credentials, headers)
+        val request = HttpEntity(body, headers)
 
         return executeRequest(targetUrl, HttpMethod.POST, request)
     }
 
-    fun forwardUpdateUsername(authHeader: String?, body: JsonNode): ResponseEntity<JsonNode> {
+    fun forwardUpdateUsername(authHeader: String?, body: String): ResponseEntity<String> {
         val targetUrl = "$authServiceUrl/api/auth/update-username"
         val headers = HttpHeaders().apply {
             contentType = MediaType.APPLICATION_JSON
@@ -36,25 +33,18 @@ class AuthClient(
         return executeRequest(targetUrl, HttpMethod.POST, request)
     }
 
-    /* Centraliza la ejecución y el tipado seguro con JsonNode */
-    private fun executeRequest(url: String, method: HttpMethod, request: HttpEntity<*>):
-            ResponseEntity<JsonNode> {
+    /* Centraliza la ejecución */
+private fun executeRequest(url: String, method: HttpMethod, request: HttpEntity<*>): ResponseEntity<String> {
         return try {
-            restTemplate.exchange(url, method, request, JsonNode::class.java)
+            restTemplate.exchange(url, method, request, String::class.java)
         } catch (ex: HttpStatusCodeException) {
-            val errorBody: JsonNode? = try {
-                if (!ex.responseBodyAsString.isNullOrBlank()) {
-                    objectMapper.readTree(ex.responseBodyAsString)
-                } else null
-            } catch (_: Exception) {
-                null
-            }
-
-            return if (errorBody != null) {
-                ResponseEntity.status(ex.statusCode).body(errorBody)
-            } else {
-                ResponseEntity.status(ex.statusCode).build()
-            }
+            ResponseEntity.status(ex.statusCode)
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .body(ex.responseBodyAsString)
+        } catch (ex: Exception) {
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .body("{\"message\": \"Fallo de comunicación en BFF: ${ex.message}\"}")
         }
     }
 }

@@ -1,8 +1,6 @@
 package cl.donaton.donaton.controller
 
 import cl.donaton.donaton.service.BffProfileService
-import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.node.ObjectNode
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
@@ -15,7 +13,7 @@ class BffProfileController(private val bffProfileService: BffProfileService) {
         @PathVariable userId: Long,
         @RequestHeader("Authorization", required = false) authHeader: String?,
         @RequestAttribute("authenticatedUserId", required = false) authenticatedUserId: String?
-    ): ResponseEntity<JsonNode> {
+    ): ResponseEntity<String> {
 
         return bffProfileService.getUserProfile(userId, authHeader)
     }
@@ -25,8 +23,8 @@ class BffProfileController(private val bffProfileService: BffProfileService) {
         @PathVariable userId: Long,
         @RequestHeader("Authorization", required = false) authHeader: String?,
         @RequestAttribute("authenticatedUserId", required = false) authenticatedUserId: String?,
-        @RequestBody updatedProfile: ObjectNode
-    ): ResponseEntity<JsonNode> {
+        @RequestBody updatedProfile: String
+    ): ResponseEntity<String> {
         
         return bffProfileService.updateUserProfile(userId, authHeader, updatedProfile)
     }
