@@ -22,6 +22,7 @@ spec:
       containers:
         - name: ms-auth
           image: proyecto-fullstack-3-ms-auth:latest
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8081
           env:

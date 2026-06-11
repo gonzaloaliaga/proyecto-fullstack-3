@@ -34,8 +34,8 @@ spec:
     spec:
       containers:
       - name: frontend-app
-        image: proyecto-fullstack-3-frontend:v1 
-        imagePullPolicy: Always
+        image: proyecto-fullstack-3-frontend:latest 
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 80
         volumeMounts:
