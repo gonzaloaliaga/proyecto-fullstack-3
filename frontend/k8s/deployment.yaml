@@ -34,7 +34,7 @@ spec:
     spec:
       containers:
       - name: frontend-app
-        image: m4tykrsty/donaton-frontend:v1 
+        image: proyecto-fullstack-3-frontend:v1 
         imagePullPolicy: Always
         ports:
         - containerPort: 80
@@ -55,7 +55,6 @@ metadata:
   labels:
     app: donaton-frontend
 spec:
-  type: LoadBalancer 
   selector:
     app: donaton-frontend 
   ports:

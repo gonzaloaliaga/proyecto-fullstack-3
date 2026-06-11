@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ms-profile-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ms-profile
+  template:
+    metadata:
+      labels:
+        app: ms-profile
+    spec:
+      initContainers:
+        - name: wait-for-profile-db
+          image: postgres:16-alpine
+          command:
+            - sh
+            - -c
+            - "until pg_isready -h profile-db -p 5432 -U user; do echo esperando por profile-db; sleep 2; done;"
+      containers:
+        - name: ms-profile
+          image: proyecto-fullstack-3-ms-profile:latest
+          ports:
+            - containerPort: 8081
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:postgresql://profile-db:5432/profile-db"
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: donaton-global-secrets
+                  key: DB_USER
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: donaton-global-secrets
+                  key: DB_PASSWORD
+            - name: JWT_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: donaton-global-secrets
+                  key: JWT_PRIVATE_KEY
+            - name: JWT_PUBLIC_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: donaton-global-secrets
+                  key: JWT_PUBLIC_KEY
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ms-profile-service
+spec:
+  selector:
+    app: ms-profile
+  ports:
+    - protocol: TCP
+      port: 8082
+      targetPort: 8082

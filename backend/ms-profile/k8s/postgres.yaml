@@ -1,0 +1,62 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: profile-db-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: profile-db-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: profile-db
+  template:
+    metadata:
+      labels:
+        app: profile-db
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:16-alpine
+          env:
+            - name: POSTGRES_DB
+              value: "profile-db"
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: donaton-global-secrets
+                  key: DB_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: donaton-global-secrets
+                  key: DB_PASSWORD
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - name: profile-db-storage
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: profile-db-storage
+          persistentVolumeClaim:
+            claimName: profile-db-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: profile-db
+spec:
+  selector:
+    app: profile-db
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
