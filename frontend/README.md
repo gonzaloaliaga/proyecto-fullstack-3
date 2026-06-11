@@ -1,47 +1,73 @@
-# Frontend Service
+# React + TypeScript + Vite
 
-## Propósito
-Interfaz de usuario en React que consume el `bff-service` para autenticación y datos de perfil.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-## Funcionalidades
-- Inicio de sesión (`login`)
-- Almacenamiento seguro del token JWT en `localStorage`
-- Mantenimiento de sesión en el cliente
-- Consulta y actualización de perfil a través del BFF
+Currently, two official plugins are available:
 
-## Estructura principal
-- `src/App.jsx`
-- `src/context/AuthContext.jsx`
-- `src/services/authService.ts`
-- `src/services/profileService.ts`
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
 
-## Flujo de autenticación
-- El usuario se autentica en `POST http://localhost:8080/api/auth/login`
-- El BFF reenvía la petición a `auth-service`
-- El `token` se almacena en `localStorage` bajo `donaton_token`
-- El frontend lo usa para `Authorization: Bearer <token>` en peticiones de perfil
+## React Compiler
 
-## Tecnologías
-- React 19.2.5
-- Vite 8.0.10
-- Tailwind CSS 4.3.0
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-## Ejecución
-### Instalar dependencias
-```bash
-cd frontend-service
-npm install
+## Expanding the ESLint configuration
+
+If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+
+```js
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
+
+      // Remove tseslint.configs.recommended and replace with this
+      tseslint.configs.recommendedTypeChecked,
+      // Alternatively, use this for stricter rules
+      tseslint.configs.strictTypeChecked,
+      // Optionally, add this for stylistic rules
+      tseslint.configs.stylisticTypeChecked,
+
+      // Other configs...
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
 ```
 
-### Levantar aplicación
-```bash
-npm run dev
-```
+You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
 
-### Docker Compose
-```bash
-docker compose up --build frontend-service
-```
+```js
+// eslint.config.js
+import reactX from 'eslint-plugin-react-x'
+import reactDom from 'eslint-plugin-react-dom'
 
-## Observaciones
-El frontend comunica con el BFF en `http://localhost:8080` y mantiene la sesión en `localStorage`.
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
+      // Enable lint rules for React
+      reactX.configs['recommended-typescript'],
+      // Enable lint rules for React DOM
+      reactDom.configs.recommended,
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
+```
