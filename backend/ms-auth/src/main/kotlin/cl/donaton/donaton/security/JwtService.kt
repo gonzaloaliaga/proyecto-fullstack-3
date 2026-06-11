@@ -14,17 +14,21 @@ import java.util.Date
 
 @Service
 class JwtService(
+    /* Clave privada en formato Base64 */
     @Value("\${JWT_PRIVATE_KEY}") private val privateKeyBase64: String,
     @Value("\${JWT_PUBLIC_KEY}") private val publicKeyBase64: String
 ) {
+    /* Algoritmo de firma RSA */
     private val algorithm: Algorithm by lazy {
         Algorithm.RSA256(getPublicKey(), getPrivateKey())
     }
 
+    /* Verificador de tokens JWT */
     private val verifier by lazy {
         JWT.require(algorithm).build()
     }
 
+    /* Función para desempaquetar la clave */
     private fun unpackKey(envBase64: String): String {
         val pemString = String(Base64.getDecoder().decode(envBase64))
         return pemString
@@ -37,6 +41,7 @@ class JwtService(
             .replace("\\s".toRegex(), "") // Elimina saltos de línea y espacios
     }
 
+    /* Función para obtener la clave privada */
     private fun getPrivateKey(): RSAPrivateKey {
         val pureBase64 = unpackKey(privateKeyBase64)
         val keyBytes = Base64.getDecoder().decode(pureBase64)
@@ -45,6 +50,7 @@ class JwtService(
         return kf.generatePrivate(spec) as RSAPrivateKey
     }
 
+    /* Función para obtener la clave pública */
     private fun getPublicKey(): RSAPublicKey {
         val pureBase64 = unpackKey(publicKeyBase64)
         val keyBytes = Base64.getDecoder().decode(pureBase64)
@@ -53,6 +59,7 @@ class JwtService(
         return kf.generatePublic(spec) as RSAPublicKey
     }
 
+    /* Función para generar un token JWT */
     fun generateToken(id: Long, username: String): String {
         return JWT.create()
             .withSubject(id.toString())
@@ -62,6 +69,7 @@ class JwtService(
             .sign(algorithm)
     }
 
+    /* Función para extraer el ID del usuario de un token JWT */
     fun extractUserId(token: String): Long? {
         return try {
             val decodedJWT = verifier.verify(token)

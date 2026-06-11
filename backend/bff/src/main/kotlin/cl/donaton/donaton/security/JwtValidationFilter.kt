@@ -10,6 +10,7 @@ import org.springframework.web.filter.OncePerRequestFilter
 @Component
 class JwtValidationFilter(private val jwtService: JwtService) : OncePerRequestFilter() {
 
+    /* Intercepta las peticiones apenas llegan */
     override fun doFilterInternal(
         request: HttpServletRequest,
         response: HttpServletResponse,
@@ -17,12 +18,13 @@ class JwtValidationFilter(private val jwtService: JwtService) : OncePerRequestFi
     ) {
         val path = request.servletPath
 
-        // Omitir validación para el login y preflights CORS
+        /* Omitir validación para el login y preflights CORS */
         if (path.contains("/api/auth/login") || request.method.equals("OPTIONS", ignoreCase = true)) {
             filterChain.doFilter(request, response)
             return
         }
 
+        /* Obtiene el token */
         val authHeader = request.getHeader("Authorization")
         
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
@@ -31,6 +33,8 @@ class JwtValidationFilter(private val jwtService: JwtService) : OncePerRequestFi
         }
 
         val token = authHeader.substring(7)
+
+        /* Valida el ID extraído del token */
         val userId = jwtService.validateAndExtractId(token)
 
         if (userId == null) {
@@ -38,7 +42,7 @@ class JwtValidationFilter(private val jwtService: JwtService) : OncePerRequestFi
             return
         }
 
-        // IMPORTANTE: Guarda el ID en el request para que el controlador lo tenga a mano
+        /* Guarda el ID en el request para que el controlador lo tenga a mano */
         request.setAttribute("authenticatedUserId", userId)
 
         filterChain.doFilter(request, response)

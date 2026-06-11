@@ -11,5 +11,6 @@ data class User(
     var username: String,
     val password: String,
 ) {
+    /* Constructor vacío requerido por JPA */
     constructor() : this(0, "", "")
 }

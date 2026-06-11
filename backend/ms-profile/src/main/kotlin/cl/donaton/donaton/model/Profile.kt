@@ -13,6 +13,6 @@ data class Profile(
     val address: String,
     val run: String
 ) {
-    // Constructor vacío requerido por JPA
+    /* Constructor vacío requerido por JPA */
     constructor() : this(0, "", "", "", "")
 }
