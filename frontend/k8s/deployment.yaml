@@ -1,0 +1,63 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: frontend-nginx-config
+  labels:
+    app: donaton-frontend
+data:
+  default.conf: |
+    server {
+        listen 80;
+        location / {
+            root /usr/share/nginx/html;
+            index index.html index.htm;
+            try_files $uri $uri/ /index.html; 
+        }
+    }
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-deployment
+  labels:
+    app: donaton-frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: donaton-frontend
+  template:
+    metadata:
+      labels:
+        app: donaton-frontend
+    spec:
+      containers:
+      - name: frontend-app
+        image: proyecto-fullstack-3-frontend:latest 
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: nginx-config-volume
+          mountPath: /etc/nginx/conf.d/default.conf
+          subPath: default.conf
+      volumes:
+      - name: nginx-config-volume
+        configMap:
+          name: frontend-nginx-config
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+  labels:
+    app: donaton-frontend
+spec:
+  selector:
+    app: donaton-frontend 
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
