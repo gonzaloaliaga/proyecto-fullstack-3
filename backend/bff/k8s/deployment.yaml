@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bff-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bff
+  template:
+    metadata:
+      labels:
+        app: bff
+    spec:
+      containers:
+        - name: bff-app
+          image: proyecto-fullstack-3-bff:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SERVICES_AUTH_URL
+              value: "http://ms-auth-service:8081"
+            - name: SERVICES_PROFILE_URL
+              value: "http://ms-profile-service:8082"
+              
+            - name: JWT_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: donaton-global-secrets
+                  key: JWT_PRIVATE_KEY
+            - name: JWT_PUBLIC_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: donaton-global-secrets
+                  key: JWT_PUBLIC_KEY
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bff-service
+spec:
+  selector:
+    app: bff
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
