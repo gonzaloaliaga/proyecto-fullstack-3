@@ -43,6 +43,7 @@ dependencies {
 	implementation("com.auth0:java-jwt:4.4.0")
 
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0")
+	implementation("org.springframework.boot:spring-boot-starter-validation")
 
 	annotationProcessor("org.projectlombok:lombok")
 

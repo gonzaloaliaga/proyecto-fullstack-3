@@ -34,6 +34,8 @@ services:
   ms-auth:
     build: ./backend/ms-auth
     container_name: ms-auth
+    ports:
+      - "8081:8081"
     networks:
       - donaton-network
     depends_on:
