@@ -52,6 +52,8 @@ services:
   ms-profile:
     build: ./backend/ms-profile
     container_name: ms-profile
+    ports:
+      - "8082:8082"
     networks:
       - donaton-network
     depends_on:
@@ -66,6 +68,8 @@ services:
   ms-donation:
     build: ./backend/ms-donation
     container_name: ms-donation
+    ports:
+      - "8083:8083"
     networks:
       - donaton-network
     depends_on:
@@ -80,6 +84,8 @@ services:
   ms-inventory:
     build: ./backend/ms-inventory
     container_name: ms-inventory
+    ports:
+      - "8084:8084"
     networks:
       - donaton-network
     depends_on:
@@ -94,6 +100,8 @@ services:
   ms-logistic:
     build: ./backend/ms-logistic
     container_name: ms-logistic
+    ports:
+      - "8085:8085"
     networks:
       - donaton-network
     depends_on:
