@@ -24,8 +24,10 @@ class ProfileController(
         summary = "Obtener perfil de usuario", description = "Retorna los datos del perfil asociado al ID de usuario proporcionado.")
     @ApiResponses(
         value = [
-            ApiResponse(responseCode = "200", description = "Perfil encontrado exitosamente"),
-            ApiResponse(responseCode = "404", description = "Perfil no encontrado")
+            ApiResponse(responseCode = "200", description = "Retorna la entidad Profile encontrada"),
+            ApiResponse(responseCode = "400", description = "Tipo de dato incorrecto para el parámetro userId"),
+            ApiResponse(responseCode = "404", description = "No se encontró ningún perfil asociado a este ID"),
+            ApiResponse(responseCode = "500", description = "Fallo de conexión con la base de datos profile-db")
         ]
     )
     fun getUserProfile(
@@ -43,8 +45,10 @@ class ProfileController(
     @ApiResponses(
         value = [
             ApiResponse(responseCode = "200", description = "Perfil actualizado exitosamente"),
-            ApiResponse(responseCode = "400", description = "Datos proporcionados inválidos"),
-            ApiResponse(responseCode = "404", description = "Perfil no encontrado")
+            ApiResponse(responseCode = "400", description = "Violación de constraints"),
+            ApiResponse(responseCode = "403", description = "Prohibido. El token es válido, pero el ID del token no coincide con el ID del perfil que se intenta modificar."),
+            ApiResponse(responseCode = "404", description = "Intento de actualizar un perfil que no existe"),
+            ApiResponse(responseCode = "500", description = "Error interno del servidor")
         ]
     )
     fun updateUserProfile(

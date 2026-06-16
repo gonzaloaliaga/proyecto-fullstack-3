@@ -24,6 +24,15 @@ class AuthController(
 
     @PostMapping("/login")
     @Operation(summary = "Iniciar sesión", description = "Valida las credenciales y devuelve un token JWT")
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "Credenciales correctas, retorna token"),
+            ApiResponse(responseCode = "400", description = "Faltan campos obligatorios"),
+            ApiResponse(responseCode = "401", description = "Usuario o contraseña incorrectos"),
+            ApiResponse(responseCode = "404", description = "Usuario no registrado en el sistema"),
+            ApiResponse(responseCode = "500", description = "Error interno de base de datos")
+        ]
+    )
     fun login(@RequestBody loginRequest: LoginRequestDto): ResponseEntity<AuthResponse> {
         val response = authService.login(loginRequest)
         return ResponseEntity.ok(response)
@@ -34,13 +43,15 @@ class AuthController(
         summary = "Actualizar nombre de usuario", description = "Permite a un usuario autenticado cambiar su nombre de usuario actual por uno nuevo.")
     @ApiResponses(
         value = [
-            ApiResponse(responseCode = "200", description = "Nombre de usuario actualizado correctamente"),
-            ApiResponse(responseCode = "400", description = "Datos inválidos"),
-            ApiResponse(responseCode = "401", description = "No autorizado"),
-            ApiResponse(responseCode = "404", description = "Usuario no encontrado")
+            ApiResponse(responseCode = "200", description = "Username cambiado con éxito"),
+            ApiResponse(responseCode = "400", description = "El nuevo username está en uso"),
+            ApiResponse(responseCode = "401", description = "El token está corrupto, expirado o manipulado"),
+            ApiResponse(responseCode = "404", description = "El ID extraído del token no existe en la tabla de usuarios"),
+            ApiResponse(responseCode = "500", description = "Error al intentar guardar en la base de datos")
         ]
     )
     fun updateUsername(
+        @Parameter(description = "Token extraído por el BFF", required = true)
         @RequestHeader("Authorization") tokenHeader: String?,
         @RequestBody request: UpdateUsernameRequestDto
     ): ResponseEntity<UpdateUsernameResponseDto> {
