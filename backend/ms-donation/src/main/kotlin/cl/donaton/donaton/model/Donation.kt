@@ -29,7 +29,6 @@ data class Donation(
     @Column(nullable = false)
     val status: DonationStatus = DonationStatus.PENDING
 ) {
-    /* Constructor vacío requerido por JPA */
     constructor() : this(0, "", 0, "", LocalDate.now(), 0, DonationStatus.PENDING)
 }
  

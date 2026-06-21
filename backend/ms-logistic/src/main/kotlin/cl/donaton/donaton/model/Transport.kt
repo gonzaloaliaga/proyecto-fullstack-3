@@ -24,6 +24,5 @@ data class Transport(
     @Column(nullable = false)
     val available: Boolean = true
 ) {
-    /* Constructor vacío requerido por JPA */
     constructor() : this(0, "", "", "", 0, true)
 }

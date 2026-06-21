@@ -27,17 +27,13 @@ dependencies {
  
 	compileOnly("org.projectlombok:lombok")
  
-	// Conexión a PostgreSQL
 	runtimeOnly("org.postgresql:postgresql")
  
-	// Dependencias de Flyway
 	implementation("org.springframework.boot:spring-boot-starter-flyway")
 	implementation("org.flywaydb:flyway-database-postgresql")
  
-	// Documentación OpenAPI / Swagger
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.3")
  
-	// Validación de DTOs
 	implementation("org.springframework.boot:spring-boot-starter-validation")
  
 	annotationProcessor("org.projectlombok:lombok")

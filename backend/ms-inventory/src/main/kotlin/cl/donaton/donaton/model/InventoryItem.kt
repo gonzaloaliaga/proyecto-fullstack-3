@@ -26,6 +26,5 @@ data class InventoryItem(
     @Column(name = "last_updated", nullable = false)
     val lastUpdated: LocalDateTime = LocalDateTime.now()
 ) {
-    /* Constructor vacío requerido por JPA */
     constructor() : this(0, CollectionCenter(), "", 0, "", LocalDateTime.now())
 }

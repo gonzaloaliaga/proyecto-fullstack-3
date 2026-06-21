@@ -35,7 +35,6 @@ data class Need(
     @Column(name = "reported_at", nullable = false)
     val reportedAt: LocalDateTime = LocalDateTime.now()
 ) {
-    /* Constructor vacío requerido por JPA */
     constructor() : this(0, "", 0, "", null, null, "", NeedStatus.REPORTED, LocalDateTime.now())
 }
  
