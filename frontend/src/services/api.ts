@@ -15,6 +15,18 @@ function authHeaders(): HeadersInit {
   };
 }
 
+async function apiFetch(url: string, options: RequestInit = {}): Promise<Response> {
+  const res = await fetch(url, options);
+
+  if (res.status === 401) {
+    localStorage.removeItem('donaton_token');
+    localStorage.removeItem('donaton_user');
+    window.location.href = '/login';
+  }
+
+  return res;
+}
+
 // ---------- Auth ----------
 
 export interface LoginRequest {
@@ -29,7 +41,7 @@ export interface LoginResponse {
 }
 
 export async function apiLogin(payload: LoginRequest): Promise<LoginResponse> {
-  const res = await fetch(`${BFF_URL}/api/auth/login`, {
+  const res = await apiFetch(`${BFF_URL}/api/auth/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
@@ -54,7 +66,7 @@ export interface ProfileResponse {
 }
 
 export async function apiGetProfile(userId: number): Promise<ProfileResponse> {
-  const res = await fetch(`${BFF_URL}/api/profile/${userId}`, {
+  const res = await apiFetch(`${BFF_URL}/api/profile/${userId}`, {
     method: 'GET',
     headers: authHeaders(),
   });
@@ -77,7 +89,7 @@ export async function apiUpdateProfile(
   userId: number,
   data: UpdateProfileRequest
 ): Promise<ProfileResponse> {
-  const res = await fetch(`${BFF_URL}/api/profile/${userId}`, {
+  const res = await apiFetch(`${BFF_URL}/api/profile/${userId}`, {
     method: 'PUT',
     headers: authHeaders(),
     body: JSON.stringify(data),
@@ -116,7 +128,7 @@ export interface CreateDonationRequest {
 }
 
 export async function apiGetDonations(): Promise<Donation[]> {
-  const res = await fetch(`${DONATIONS_URL}/api/donations`, {
+  const res = await apiFetch(`${DONATIONS_URL}/api/donations`, {
     headers: { 'Content-Type': 'application/json' },
   });
   if (!res.ok) throw new Error(`Error ${res.status}`);
@@ -124,7 +136,7 @@ export async function apiGetDonations(): Promise<Donation[]> {
 }
 
 export async function apiCreateDonation(data: CreateDonationRequest): Promise<Donation> {
-  const res = await fetch(`${DONATIONS_URL}/api/donations`, {
+  const res = await apiFetch(`${DONATIONS_URL}/api/donations`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
@@ -159,7 +171,7 @@ export interface InventoryItem {
 }
 
 export async function apiGetCollectionCenters(): Promise<CollectionCenter[]> {
-  const res = await fetch(`${INVENTORY_URL}/api/collection-centers`, {
+  const res = await apiFetch(`${INVENTORY_URL}/api/collection-centers`, {
     headers: { 'Content-Type': 'application/json' },
   });
   if (!res.ok) throw new Error(`Error ${res.status}`);
@@ -167,7 +179,7 @@ export async function apiGetCollectionCenters(): Promise<CollectionCenter[]> {
 }
 
 export async function apiGetInventoryItems(): Promise<InventoryItem[]> {
-  const res = await fetch(`${INVENTORY_URL}/api/inventory-items`, {
+  const res = await apiFetch(`${INVENTORY_URL}/api/inventory-items`, {
     headers: { 'Content-Type': 'application/json' },
   });
   if (!res.ok) throw new Error(`Error ${res.status}`);
@@ -204,7 +216,7 @@ export interface Shipment {
 }
 
 export async function apiGetNeeds(): Promise<Need[]> {
-  const res = await fetch(`${LOGISTIC_URL}/api/needs`, {
+  const res = await apiFetch(`${LOGISTIC_URL}/api/needs`, {
     headers: { 'Content-Type': 'application/json' },
   });
   if (!res.ok) throw new Error(`Error ${res.status}`);
@@ -212,7 +224,7 @@ export async function apiGetNeeds(): Promise<Need[]> {
 }
 
 export async function apiGetShipments(): Promise<Shipment[]> {
-  const res = await fetch(`${LOGISTIC_URL}/api/shipments`, {
+  const res = await apiFetch(`${LOGISTIC_URL}/api/shipments`, {
     headers: { 'Content-Type': 'application/json' },
   });
   if (!res.ok) throw new Error(`Error ${res.status}`);
