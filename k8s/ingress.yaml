@@ -5,13 +5,64 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: "nginx"
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
-    # Permite que las rutas con /api lleguen correctamente si el BFF las procesa
     nginx.ingress.kubernetes.io/use-regex: "true"
 spec:
   rules:
   - http:
       paths:
-      # Todo el tráfico de la API va al BFF
+      # =====================================================================
+      # RUTAS PARA DOCUMENTACIÓN DE SWAGGER DIRECTA A LOS MICROSERVICIOS
+      # =====================================================================
+      
+      # 1. Swagger de ms-auth (Puerto 8081)
+      - path: /swagger-auth
+        pathType: Prefix
+        backend:
+          service:
+            name: ms-auth-service
+            port:
+              number: 8081
+
+      # 2. Swagger de ms-profile (Puerto 8082)
+      - path: /swagger-profile
+        pathType: Prefix
+        backend:
+          service:
+            name: ms-profile-service
+            port:
+              number: 8082
+
+      # 3. Swagger de ms-donation (Puerto 8083)
+      - path: /swagger-donation
+        pathType: Prefix
+        backend:
+          service:
+            name: ms-donation-service
+            port:
+              number: 8083
+
+      # 4. Swagger de ms-inventory (Puerto 8084)
+      - path: /swagger-inventory
+        pathType: Prefix
+        backend:
+          service:
+            name: ms-inventory-service
+            port:
+              number: 8084
+
+      # 5. Swagger de ms-logistic (Puerto 8085)
+      - path: /swagger-logistic
+        pathType: Prefix
+        backend:
+          service:
+            name: ms-logistic-service
+            port:
+              number: 8085
+
+      # =====================================================================
+      # RUTAS ORIGINALES DEL SISTEMA
+      # =====================================================================
+      # Todo el tráfico de la API normal va al BFF
       - path: /api
         pathType: Prefix
         backend:
@@ -19,6 +70,7 @@ spec:
             name: bff-service
             port:
               number: 8080
+
       # Todo el resto del tráfico va al Frontend (HTML, JS, CSS)
       - path: /
         pathType: Prefix
