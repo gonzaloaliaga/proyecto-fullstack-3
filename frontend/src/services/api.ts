@@ -1,7 +1,4 @@
-const BFF_URL = '/bff';
-const DONATIONS_URL = '/donations';
-const INVENTORY_URL = '/inventory';
-const LOGISTIC_URL = '/logistic';
+const API = '/api';
 
 function getToken(): string | null {
   return localStorage.getItem('donaton_token');
@@ -27,7 +24,7 @@ async function apiFetch(url: string, options: RequestInit = {}): Promise<Respons
   return res;
 }
 
-// ---------- Auth ----------
+// ─── Auth ────────────────────────────────────────────────────────────────────
 
 export interface LoginRequest {
   username: string;
@@ -41,21 +38,19 @@ export interface LoginResponse {
 }
 
 export async function apiLogin(payload: LoginRequest): Promise<LoginResponse> {
-  const res = await apiFetch(`${BFF_URL}/api/auth/login`, {
+  const res = await apiFetch(`${API}/auth/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
   });
-
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     throw new Error(err.message ?? `Error ${res.status}`);
   }
-
-  return res.json() as Promise<LoginResponse>;
+  return res.json();
 }
 
-// ---------- Profile ----------
+// ─── Profile ─────────────────────────────────────────────────────────────────
 
 export interface ProfileResponse {
   id: number;
@@ -65,47 +60,41 @@ export interface ProfileResponse {
   run: string;
 }
 
-export async function apiGetProfile(userId: number): Promise<ProfileResponse> {
-  const res = await apiFetch(`${BFF_URL}/api/profile/${userId}`, {
-    method: 'GET',
-    headers: authHeaders(),
-  });
-
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.message ?? `Error ${res.status}`);
-  }
-
-  return res.json() as Promise<ProfileResponse>;
-}
-
 export interface UpdateProfileRequest {
   email?: string;
   address?: string;
   run?: string;
 }
 
-export async function apiUpdateProfile(
-  userId: number,
-  data: UpdateProfileRequest
-): Promise<ProfileResponse> {
-  const res = await apiFetch(`${BFF_URL}/api/profile/${userId}`, {
-    method: 'PUT',
+export async function apiGetProfile(userId: number): Promise<ProfileResponse> {
+  const res = await apiFetch(`${API}/profile/${userId}`, {
+    method: 'GET',
     headers: authHeaders(),
-    body: JSON.stringify(data),
   });
-
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     throw new Error(err.message ?? `Error ${res.status}`);
   }
-
-  return res.json() as Promise<ProfileResponse>;
+  return res.json();
 }
 
-// ---------- Donations ----------
+export async function apiUpdateProfile(
+  userId: number,
+  data: UpdateProfileRequest
+): Promise<ProfileResponse> {
+  const res = await apiFetch(`${API}/profile/${userId}`, {
+    method: 'PUT',
+    headers: authHeaders(),
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.message ?? `Error ${res.status}`);
+  }
+  return res.json();
+}
 
-const DONATIONS_URL = 'http://localhost:8083';
+// ─── Donations ───────────────────────────────────────────────────────────────
 
 export type DonationStatus = 'PENDING' | 'RECEIVED' | 'ASSIGNED' | 'DELIVERED';
 
@@ -128,17 +117,17 @@ export interface CreateDonationRequest {
 }
 
 export async function apiGetDonations(): Promise<Donation[]> {
-  const res = await apiFetch(`${DONATIONS_URL}/api/donations`, {
-    headers: { 'Content-Type': 'application/json' },
+  const res = await apiFetch(`${API}/donations`, {
+    headers: authHeaders(),
   });
   if (!res.ok) throw new Error(`Error ${res.status}`);
   return res.json();
 }
 
 export async function apiCreateDonation(data: CreateDonationRequest): Promise<Donation> {
-  const res = await apiFetch(`${DONATIONS_URL}/api/donations`, {
+  const res = await apiFetch(`${API}/donations`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: authHeaders(),
     body: JSON.stringify(data),
   });
   if (!res.ok) {
@@ -148,9 +137,7 @@ export async function apiCreateDonation(data: CreateDonationRequest): Promise<Do
   return res.json();
 }
 
-// ---------- Inventory ----------
-
-const INVENTORY_URL = 'http://localhost:8084';
+// ─── Inventory ───────────────────────────────────────────────────────────────
 
 export interface CollectionCenter {
   id: number;
@@ -171,24 +158,22 @@ export interface InventoryItem {
 }
 
 export async function apiGetCollectionCenters(): Promise<CollectionCenter[]> {
-  const res = await apiFetch(`${INVENTORY_URL}/api/collection-centers`, {
-    headers: { 'Content-Type': 'application/json' },
+  const res = await apiFetch(`${API}/collection-centers`, {
+    headers: authHeaders(),
   });
   if (!res.ok) throw new Error(`Error ${res.status}`);
   return res.json();
 }
 
 export async function apiGetInventoryItems(): Promise<InventoryItem[]> {
-  const res = await apiFetch(`${INVENTORY_URL}/api/inventory-items`, {
-    headers: { 'Content-Type': 'application/json' },
+  const res = await apiFetch(`${API}/inventory-items`, {
+    headers: authHeaders(),
   });
   if (!res.ok) throw new Error(`Error ${res.status}`);
   return res.json();
 }
 
-// ---------- Logistic ----------
-
-const LOGISTIC_URL = 'http://localhost:8085';
+// ─── Logistic ────────────────────────────────────────────────────────────────
 
 export type NeedStatus = 'REPORTED' | 'IN_PROGRESS' | 'COVERED' | 'CANCELLED';
 export type ShipmentStatus = 'PLANNED' | 'IN_TRANSIT' | 'DELIVERED' | 'CANCELLED';
@@ -216,16 +201,16 @@ export interface Shipment {
 }
 
 export async function apiGetNeeds(): Promise<Need[]> {
-  const res = await apiFetch(`${LOGISTIC_URL}/api/needs`, {
-    headers: { 'Content-Type': 'application/json' },
+  const res = await apiFetch(`${API}/needs`, {
+    headers: authHeaders(),
   });
   if (!res.ok) throw new Error(`Error ${res.status}`);
   return res.json();
 }
 
 export async function apiGetShipments(): Promise<Shipment[]> {
-  const res = await apiFetch(`${LOGISTIC_URL}/api/shipments`, {
-    headers: { 'Content-Type': 'application/json' },
+  const res = await apiFetch(`${API}/shipments`, {
+    headers: authHeaders(),
   });
   if (!res.ok) throw new Error(`Error ${res.status}`);
   return res.json();

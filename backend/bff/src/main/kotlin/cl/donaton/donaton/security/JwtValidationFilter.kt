@@ -1,6 +1,5 @@
 package cl.donaton.donaton.security
 
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
@@ -10,7 +9,10 @@ import org.springframework.web.filter.OncePerRequestFilter
 @Component
 class JwtValidationFilter(private val jwtService: JwtService) : OncePerRequestFilter() {
 
-    /* Intercepta las peticiones apenas llegan */
+    private val publicPaths = listOf(
+        "/api/auth/login"
+    )
+
     override fun doFilterInternal(
         request: HttpServletRequest,
         response: HttpServletResponse,
@@ -18,23 +20,24 @@ class JwtValidationFilter(private val jwtService: JwtService) : OncePerRequestFi
     ) {
         val path = request.servletPath
 
-        /* Omitir validación para el login y preflights CORS */
-        if (path.contains("/api/auth/login") || request.method.equals("OPTIONS", ignoreCase = true)) {
+        if (request.method.equals("OPTIONS", ignoreCase = true)) {
             filterChain.doFilter(request, response)
             return
         }
 
-        /* Obtiene el token */
+        if (publicPaths.any { path.startsWith(it) }) {
+            filterChain.doFilter(request, response)
+            return
+        }
+
         val authHeader = request.getHeader("Authorization")
-        
+
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Acceso denegado: Token inexistente")
             return
         }
 
         val token = authHeader.substring(7)
-
-        /* Valida el ID extraído del token */
         val userId = jwtService.validateAndExtractId(token)
 
         if (userId == null) {
@@ -42,9 +45,7 @@ class JwtValidationFilter(private val jwtService: JwtService) : OncePerRequestFi
             return
         }
 
-        /* Guarda el ID en el request para que el controlador lo tenga a mano */
         request.setAttribute("authenticatedUserId", userId)
-
         filterChain.doFilter(request, response)
     }
 }

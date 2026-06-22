@@ -12,12 +12,15 @@ class CorsConfig {
     fun corsConfigurer(): WebMvcConfigurer {
         return object : WebMvcConfigurer {
             override fun addCorsMappings(registry: CorsRegistry) {
-                registry.addMapping("/**") // Aplica a todos los endpoints
+                registry.addMapping("/**")
                     .allowedOrigins(
-                        "http://localhost:8080", 
-                        "http://localhost:5173"
+                        "http://localhost:5173",
+                        "http://localhost:80",
+                        "http://localhost",
+                        "http://frontend",
+                        "http://frontend:80"
                     )
-                    .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
+                    .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
                     .allowedHeaders("*")
                     .allowCredentials(true)
             }
