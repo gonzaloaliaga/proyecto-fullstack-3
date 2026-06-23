@@ -25,6 +25,7 @@ dependencies {
 
 	testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+	testImplementation("io.mockk:mockk:1.13.8")
 
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 	
@@ -32,6 +33,8 @@ dependencies {
 	implementation("com.auth0:java-jwt:4.4.0")
 
 	implementation("org.apache.httpcomponents.client5:httpclient5:5.2.1")
+
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.3")
 }
 
 kotlin {

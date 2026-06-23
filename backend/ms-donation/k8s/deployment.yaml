@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ms-donation-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ms-donation
+  template:
+    metadata:
+      labels:
+        app: ms-donation
+    spec:
+      initContainers:
+        - name: wait-for-donation-db
+          image: postgres:16-alpine
+          command:
+            - sh
+            - -c
+            - "until pg_isready -h donation-db -p 5432 -U user; do echo esperando por donation-db; sleep 2; done;"
+      containers:
+        - name: ms-donation
+          image: proyecto-fullstack-3-ms-donation:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8083
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:postgresql://donation-db:5432/donation-db"
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: donaton-global-secrets
+                  key: DB_USER
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: donaton-global-secrets
+                  key: DB_PASSWORD
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ms-donation-service
+spec:
+  selector:
+    app: ms-donation
+  ports:
+    - protocol: TCP
+      port: 8083
+      targetPort: 8083

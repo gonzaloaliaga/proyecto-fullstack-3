@@ -24,7 +24,7 @@ spec:
           image: proyecto-fullstack-3-ms-profile:latest
           imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 8081
+            - containerPort: 8082
           env:
             - name: SPRING_DATASOURCE_URL
               value: "jdbc:postgresql://profile-db:5432/profile-db"
@@ -38,16 +38,6 @@ spec:
                 secretKeyRef:
                   name: donaton-global-secrets
                   key: DB_PASSWORD
-            - name: JWT_PRIVATE_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: donaton-global-secrets
-                  key: JWT_PRIVATE_KEY
-            - name: JWT_PUBLIC_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: donaton-global-secrets
-                  key: JWT_PUBLIC_KEY
 ---
 apiVersion: v1
 kind: Service

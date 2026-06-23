@@ -1,31 +1,53 @@
 # Inventory Service
 
 ## Propósito
-Microservicio encargado de la gestión de inventario para el sistema.
+Microservicio de gestión de inventario. Administra los centros de acopio y el stock de recursos almacenados en cada uno.
 
-## Estado actual
-- Servicio definido como aplicación Spring Boot
-- Contiene la configuración base y puntos de entrada
-- No se han añadido controladores REST específicos en el código actual
+## Instrucciones de ejecución
 
-## Tecnologías
-- Kotlin 2.2.21
-- Spring Boot 4.0.5
-- PostgreSQL 16
-
-## Variables de entorno
-- `SPRING_DATASOURCE_URL`
-- `SPRING_DATASOURCE_DRIVER_CLASS_NAME`
-- `SPRING_DATASOURCE_USERNAME`
-- `SPRING_DATASOURCE_PASSWORD`
-
-## Ejecución
 ### Docker Compose
 ```bash
-docker compose up --build inventory-service inventory-db
+docker compose up --build ms-inventory inventory-db
 ```
 
-> Nota: este servicio usa PostgreSQL y debe levantarse junto a su base de datos mediante Docker Compose.
+### Local
+```bash
+cd backend/ms-inventory
+./gradlew bootRun
+```
+> Requiere PostgreSQL corriendo en `localhost:5432` con base de datos `inventory-db`.
 
-## Observaciones
-Este servicio está listo para ampliar la lógica de gestión de inventario.
+## Tabla técnica
+
+| Categoría | Detalle |
+|---|---|
+| Lenguaje | Kotlin 2.2.21 |
+| Framework | Spring Boot 4.0.5 (Spring MVC + Spring Data JPA) |
+| Librerías | Flyway, PostgreSQL Driver, Jackson Kotlin, SpringDoc OpenAPI 3.0.3, Bean Validation |
+| Patrones de diseño | Layered Architecture (Controller → Service → Repository), DTO Pattern, Aggregate Root (CollectionCenter contiene InventoryItems) |
+
+## Variables de entorno
+
+| Variable | Descripción |
+|---|---|
+| `SPRING_DATASOURCE_URL` | URL de conexión a PostgreSQL |
+| `SPRING_DATASOURCE_USERNAME` | Usuario de base de datos |
+| `SPRING_DATASOURCE_PASSWORD` | Contraseña de base de datos |
+
+## Endpoints
+
+| Método | Ruta | Descripción |
+|---|---|---|
+| POST | `/api/collection-centers` | Crear centro de acopio |
+| GET | `/api/collection-centers` | Listar centros (filtros por región o activos) |
+| GET | `/api/collection-centers/{id}` | Obtener centro por ID |
+| PATCH | `/api/collection-centers/{id}` | Actualizar centro |
+| DELETE | `/api/collection-centers/{id}` | Eliminar centro |
+| POST | `/api/inventory-items` | Registrar item de inventario |
+| GET | `/api/inventory-items` | Listar items (filtro por centro) |
+| GET | `/api/inventory-items/{id}` | Obtener item por ID |
+| PATCH | `/api/inventory-items/{id}/stock` | Ajustar stock (suma o resta) |
+| DELETE | `/api/inventory-items/{id}` | Eliminar item |
+
+## Documentación API
+Disponible en `http://localhost:8084/swagger-ui.html` cuando el servicio está corriendo.
