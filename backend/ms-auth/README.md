@@ -1,45 +1,53 @@
 # Auth Service
 
 ## Propósito
-Servicio de autenticación principal responsable de la emisión y validación de tokens JWT para los usuarios.
+Microservicio de autenticación. Valida credenciales de usuarios y emite tokens JWT firmados con RSA.
 
-## Funcionalidades
-- Autenticación de usuarios mediante `POST /api/auth/login`
-- Actualización segura del nombre de usuario mediante `POST /api/auth/update-username`
-- Generación de tokens JWT con `id` y `username`
+## Instrucciones de ejecución
 
-## Endpoints
-- `POST /api/auth/login`
-  - Request body: `{ "username": string, "password": string }`
-  - Response: `{ "id": number, "username": string, "token": string }`
-
-- `POST /api/auth/update-username`
-  - Headers: `Authorization: Bearer <token>`
-  - Request body: `{ "newUsername": string }`
-  - Response: `{ "message": string, "username": string }`
-
-## Tecnologías
-- Kotlin 2.2.21
-- Spring Boot 4.0.5
-- Spring Data JPA
-- PostgreSQL 16
-- Flyway
-- JJWT (JSON Web Token)
-
-## Variables de entorno
-- `JWT_SECRET`
-- `SPRING_DATASOURCE_URL`
-- `SPRING_DATASOURCE_DRIVER_CLASS_NAME`
-- `SPRING_DATASOURCE_USERNAME`
-- `SPRING_DATASOURCE_PASSWORD`
-
-## Ejecución
 ### Docker Compose
 ```bash
-docker compose up --build auth-service auth-db
+docker compose up --build ms-auth auth-db
 ```
 
-> Nota: este servicio requiere la base de datos y los secrets de PostgreSQL definidos en `docker-compose.yml`. La ejecución local directa con `./gradlew bootRun` no está preconfigurada para este entorno sin proporcionar manualmente las variables de entorno necesarias.
+### Local
+```bash
+cd backend/ms-auth
+./gradlew bootRun
+```
+> Requiere PostgreSQL corriendo en `localhost:5432` con base de datos `auth-db` y las variables `JWT_PRIVATE_KEY`, `JWT_PUBLIC_KEY`.
 
-## Observaciones
-Este servicio usa la base de datos PostgreSQL configurada en `docker-compose.yml` y emite tokens que el `bff-service` valida antes de permitir el acceso a otros microservicios.
+## Tabla técnica
+
+| Categoría | Detalle |
+|---|---|
+| Lenguaje | Kotlin 2.2.21 |
+| Framework | Spring Boot 4.0.5 (Spring MVC + Spring Data JPA) |
+| Librerías | java-jwt 4.4.0, Flyway, PostgreSQL Driver, Jackson Kotlin |
+| Patrones de diseño | Layered Architecture (Controller → Service → Repository), Factory (AuthResponseFactory) |
+
+## Variables de entorno
+
+| Variable | Descripción |
+|---|---|
+| `JWT_PRIVATE_KEY` | Clave privada RSA en Base64 para firmar tokens |
+| `JWT_PUBLIC_KEY` | Clave pública RSA en Base64 para verificar tokens |
+| `SPRING_DATASOURCE_URL` | URL de conexión a PostgreSQL |
+| `SPRING_DATASOURCE_USERNAME` | Usuario de base de datos |
+| `SPRING_DATASOURCE_PASSWORD` | Contraseña de base de datos |
+
+## Endpoints
+
+| Método | Ruta | Descripción |
+|---|---|---|
+| POST | `/api/auth/login` | Autenticar usuario, retorna JWT |
+| POST | `/api/auth/update-username` | Actualizar username (requiere JWT) |
+
+## Usuarios
+
+| Username | Password | 
+|---|---|
+| admin | 1111 |
+| logistica | 2222 |
+| voluntario | 3333 |
+| donante | 4444 |
