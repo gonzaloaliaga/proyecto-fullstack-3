@@ -3,9 +3,6 @@ import type { ReactNode } from 'react';
 import type { User } from '../../types/user.types';
 import { saveSession, clearSession, getStoredUser } from './index.utils';
 
-/**
- * Definimos qué datos y funciones tendrá nuestro contexto
- */
 interface AuthContextProps {
   user: User | null;
   isAuthenticated: boolean;
@@ -13,14 +10,8 @@ interface AuthContextProps {
   logout: () => void;
 }
 
-/**
- * Creamos el contexto vacío por defecto
- */
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
-/**
- * Proveedor del contexto
- */
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(getStoredUser());
 
@@ -35,11 +26,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ 
-      user, 
-      isAuthenticated: !!user, 
-      login, 
-      logout 
+    <AuthContext.Provider value={{
+      user,
+      isAuthenticated: !!user,
+      login,
+      logout
     }}>
       {children}
     </AuthContext.Provider>
