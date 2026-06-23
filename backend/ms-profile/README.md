@@ -1,38 +1,51 @@
 # Profile Service
 
 ## Propósito
-Microservicio responsable de la gestión y persistencia del perfil de usuario.
+Microservicio de perfiles de usuario. Almacena y gestiona el rol, email, dirección y RUN de cada usuario.
 
-## Funcionalidades
-- Lectura del perfil de usuario mediante `GET /api/profile/{userId}`
-- Actualización parcial del perfil mediante `PATCH /api/profile/{userId}`
+## Instrucciones de ejecución
 
-## Endpoints
-- `GET /api/profile/{userId}`
-  - Response: objeto `Profile`
-- `PATCH /api/profile/{userId}`
-  - Request body: campos opcionales `role`, `email`, `address`, `run`
-
-## Tecnologías
-- Kotlin 2.2.21
-- Spring Boot 4.0.5
-- Spring Data JPA
-- PostgreSQL 16
-- Flyway
-
-## Variables de entorno
-- `SPRING_DATASOURCE_URL`
-- `SPRING_DATASOURCE_DRIVER_CLASS_NAME`
-- `SPRING_DATASOURCE_USERNAME`
-- `SPRING_DATASOURCE_PASSWORD`
-
-## Ejecución
 ### Docker Compose
 ```bash
-docker compose up --build profile-service profile-db
+docker compose up --build ms-profile profile-db
 ```
 
-> Nota: este servicio requiere la base de datos de PostgreSQL y las variables de entorno definidas en `docker-compose.yml`. La ejecución local directa no está preconfigurada sin los secrets de base de datos.
+### Local
+```bash
+cd backend/ms-profile
+./gradlew bootRun
+```
+> Requiere PostgreSQL corriendo en `localhost:5432` con base de datos `profile-db`.
 
-## Observaciones
-El servicio persiste los datos del perfil y recibe las peticiones frontend a través del `bff-service`.
+## Tabla técnica
+
+| Categoría | Detalle |
+|---|---|
+| Lenguaje | Kotlin 2.2.21 |
+| Framework | Spring Boot 4.0.5 (Spring MVC + Spring Data JPA) |
+| Librerías | Flyway, PostgreSQL Driver, Jackson Kotlin |
+| Patrones de diseño | Layered Architecture (Controller → Service → Repository), DTO Pattern |
+
+## Variables de entorno
+
+| Variable | Descripción |
+|---|---|
+| `SPRING_DATASOURCE_URL` | URL de conexión a PostgreSQL |
+| `SPRING_DATASOURCE_USERNAME` | Usuario de base de datos |
+| `SPRING_DATASOURCE_PASSWORD` | Contraseña de base de datos |
+
+## Endpoints
+
+| Método | Ruta | Descripción |
+|---|---|---|
+| GET | `/api/profile/{userId}` | Obtener perfil de usuario |
+| PUT | `/api/profile/{userId}` | Actualizar perfil de usuario |
+
+## Perfiles
+
+| ID | Rol | Email |
+|---|---|---|
+| 1 | ADMIN | admin@donaton.cl |
+| 2 | LOGISTIC | logistic@donaton.cl |
+| 3 | VOLUNTEER | volunteer@gmail.com |
+| 4 | DONOR | donor@gmail.cl |

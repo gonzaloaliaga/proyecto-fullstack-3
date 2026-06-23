@@ -1,115 +1,172 @@
-# DONATON - Gestión Humanitaria Tecnológica
+# Donatón — Sistema de Gestión de Donaciones
 
-## Índice
-1. [Contexto](#contexto)
-2. [Problemática y necesidades](#problemática-y-necesidades)
-3. [Levantamiento de requerimientos](#levantamiento-de-requerimientos)
-4. [Casos de Uso](#casos-de-uso)
-5. [Propuesta de Solución y Arquitectura](#propuesta-de-solución-y-arquitectura)
-6. [Consideraciones éticas](#consideraciones-éticas)
-7. [Conclusión](#conclusión)
+Plataforma fullstack de gestión de donaciones, inventario y logística humanitaria. Construida con arquitectura de microservicios en el backend y una SPA React en el frontend, comunicados a través de un BFF (Backend For Frontend).
 
-## Contexto
-La plataforma Donaton surge como una respuesta tecnológica avanzada frente a una problemática crítica en la gestión de emergencias: la falta de una infraestructura digital capaz de coordinar la ayuda humanitaria de manera ágil y centralizada. En situaciones de catástrofe natural o crisis social, la capacidad de respuesta es el factor determinante para mitigar el sufrimiento de las comunidades afectadas.
+## Tecnologías
 
-Actualmente, el ecosistema de ayuda en el país descansa sobre la buena voluntad de voluntarios y diversas instituciones, pero carece de un eje integrador. Históricamente, la recepción de alimentos y artículos se ha gestionado mediante procesos manuales o herramientas aisladas que no se actualizan en tiempo real. Este proyecto se enfoca en transformar esa operativa en un flujo automatizado y transparente, donde cada actor esté conectado bajo un estándar de alta disponibilidad tecnológica.
+| Capa | Tecnología |
+|---|---|
+| Frontend | React 19, TypeScript, Tailwind CSS 4, Vite, React Router 7 |
+| BFF y Microservicios | Kotlin 2.2.21, Spring Boot 4.0.5, Spring Data JPA |
+| Bases de datos | PostgreSQL 16 |
+| Autenticación | JWT con RSA (java-jwt 4.4.0) |
+| Migraciones | Flyway |
+| Contenedores | Docker, Docker Compose |
+| Orquestación | Kubernetes |
 
-## Problemática y necesidades
-El crecimiento operativo de Donaton ha superado la capacidad de sus sistemas tradicionales, haciendo necesario implementar una arquitectura de microservicios para resolver desafíos críticos:  
+## Requisitos previos
 
-- Falta de trazabilidad y transparencia: Imposibilidad actual de rastrear el ciclo de vida completo de una donación (qué se donó, quién lo hizo y dónde se encuentra).  
+- Docker Desktop instalado y corriendo
+- Git
 
-- Descoordinación logística: Ausencia de un inventario global en tiempo real, lo que provoca mala distribución de recursos (duplicidad de esfuerzos o desabastecimiento).  
+## Ejecución con Docker Compose
 
-- Inseguridad de datos: Necesidad de proteger desde el diseño la información confidencial y vulnerable de los damnificados y centros de acopio.
+### 1. Clonar el repositorio
 
-## Levantamiento de requerimientos
+```bash
+git clone https://github.com/gonzaloaliaga/proyecto-fullstack-3.git
+cd proyecto-fullstack-3
+```
 
-Para dar solución a la problemática, el sistema se divide en tres módulos principales, cada uno con requisitos funcionales específicos, además de una serie de requisitos no funcionales que garantizan la calidad del sistema.
+### 2. Crear el archivo `.env` en la raíz del proyecto
 
-### Requisitos Funcionales por Módulo
+```env
+JWT_PRIVATE_KEY=<clave_privada_rsa_en_base64>
+JWT_PUBLIC_KEY=<clave_publica_rsa_en_base64>
+```
 
-**1. Módulo de Gestión de Donaciones**
-- **Registro de aportes:** El sistema debe permitir a donantes (personas o empresas) registrar el tipo de recurso, cantidad y origen.
-- **Generación de comprobantes:** El sistema debe generar un identificador único (ID de seguimiento) para cada donación registrada.
-- **Trazabilidad:** El sistema debe permitir actualizar el estado de la donación (ej. *Ingresada, En Tránsito, Recibida en Acopio*) y reflejar en qué centro se encuentra.
+### 3. Levantar todos los servicios con Kubernetes
 
-**2. Módulo de Gestión de Logística y Distribución**
-- **Gestión de Acopios:** Administrar la información de los diferentes centros de acopio a nivel nacional.
-- **Control de Inventario:** Mantener un conteo en tiempo real de los recursos disponibles en cada centro de acopio.
-- **Orquestación de Transporte:** Permitir al equipo logístico asignar vehículos y conductores a lotes de donaciones para su traslado.
+```bash
+# =====================================================================
+# REQUISITOS PREVIOS (Descomentar solo la primera vez en una PC nueva)
+# =====================================================================
+# winget install Kubernetes.minikube
+# winget install Kubernetes.kubectl
 
-**3. Módulo de Gestión de Necesidades en Terreno**
-- **Reporte de Emergencia:** Proveer un formulario para que personal autorizado (ej. municipalidades) reporte necesidades críticas de suministros.
-- **Geolocalización:** El sistema debe capturar y registrar las coordenadas exactas de la necesidad reportada.
-- **Mapeo Interactivo:** Visualizar los reportes de necesidades en un mapa global para facilitar la toma de decisiones.
+# =====================================================================
+# PASO 0: DESTRUCCIÓN TOTAL DEL ENTORNO PREVIO
+# =====================================================================
+Write-Host "🛑 Deteniendo y destruyendo el clúster previo para iniciar desde cero..." -ForegroundColor Yellow
+minikube stop
+minikube delete
 
-### Requisitos No Funcionales
-- **Seguridad (Autenticación y Autorización):** Proteger endpoints sensibles utilizando un API Gateway y tokens JWT.
-- **Disponibilidad y Escalabilidad:** Soportar alta concurrencia mediante una arquitectura de microservicios contenerizados (Docker).
-- **Integridad de Datos:** Garantizar transacciones seguras (ACID) utilizando bases de datos relacionales independientes (PostgreSQL) por microservicio.
-- **Accesibilidad (a11y):** La interfaz de usuario debe cumplir con normativas de contraste y navegación por teclado para ser operable bajo estrés o por personas con discapacidades.
+# =====================================================================
+# PASO 1: ENCENDER Y PREPARAR EL CLÚSTER LIMPIO
+# =====================================================================
+Write-Host "🚀 Iniciando una nueva instancia limpia de Minikube..." -ForegroundColor Green
+minikube start --driver=docker
+minikube addons enable ingress
 
-## Casos de Uso
+# =====================================================================
+# PASO 2: CONECTAR ENTORNO Y COMPILAR LAS 6 IMÁGENES LOCALES
+# =====================================================================
+Write-Host "📦 Conectando al entorno Docker de Minikube y compilando imágenes..." -ForegroundColor Cyan
+minikube docker-env | Invoke-Expression
 
-A continuación, se detallan los flujos principales que interactúan con el sistema:
+# Componentes Core e Interfaz
+docker build -t proyecto-fullstack-3-frontend:latest ./frontend
+docker build -t proyecto-fullstack-3-bff:latest ./backend/bff
 
-### CU-01: Trazabilidad Completa de Donaciones
-- **Actores:** Donante (Persona/Empresa), Recepcionista de Acopio.
-- **Descripción:** Garantiza que una donación sea registrada y monitoreada hasta su llegada al centro de acopio.
-- **Flujo Principal:** 1. El Donante ingresa a la plataforma y registra los insumos a donar.
-  2. El sistema emite un código de seguimiento único.
-  3. Al llegar físicamente al centro, el Recepcionista busca el código en el sistema y marca la donación como "Recibida".
-  4. El sistema actualiza automáticamente el inventario del centro de acopio.
+# Los 5 Microservicios de Negocio
+docker build -t proyecto-fullstack-3-ms-auth:latest ./backend/ms-auth
+docker build -t proyecto-fullstack-3-ms-profile:latest ./backend/ms-profile
+docker build -t proyecto-fullstack-3-ms-logistic:latest ./backend/ms-logistic
+docker build -t proyecto-fullstack-3-ms-donation:latest ./backend/ms-donation
+docker build -t proyecto-fullstack-3-ms-inventory:latest ./backend/ms-inventory
 
-### CU-02: Mapeo y Reporte de Crisis en Tiempo Real
-- **Actores:** Personal Municipal / Autoridad en Terreno.
-- **Descripción:** Permite visibilizar las zonas afectadas y sus necesidades urgentes.
-- **Flujo Principal:**
-  1. El Personal Municipal accede al módulo de necesidades desde su ubicación.
-  2. Ingresa los recursos faltantes, el nivel de urgencia y permite al sistema capturar sus coordenadas exactas.
-  3. El sistema registra la alerta y actualiza el mapa interactivo (basado en Leaflet) en tiempo real, haciéndolo visible para el equipo logístico.
+# =====================================================================
+# PASO 3: DESPLEGAR INFRAESTRUCTURA Y CONFIGURACIONES
+# =====================================================================
+Write-Host "🔐 Aplicando secretos e Ingress global..." -ForegroundColor Magenta
+kubectl apply -f k8s/donaton-global-secrets.yaml
+kubectl apply -f k8s/ingress.yaml
 
-### CU-03: Asignación y Orquestación de Despachos
-- **Actores:** Equipo de Logística.
-- **Descripción:** Conecta los recursos disponibles con las necesidades del terreno mediante el despacho de insumos.
-- **Flujo Principal:**
-  1. El operario de Logística visualiza el mapa de crisis (generado en CU-02).
-  2. Consulta el inventario disponible en el centro de acopio más cercano (actualizado en CU-01).
-  3. Crea una orden de despacho vinculando los insumos requeridos con un vehículo y conductor disponible.
-  4. El sistema cambia el estado de los insumos a "Despachados" y alerta a la zona de destino sobre la llegada en curso.
+# =====================================================================
+# PASO 4: DESPLEGAR LAS 5 BASES DE DATOS POSTGRES
+# =====================================================================
+Write-Host "🗄️ Creando instancias de bases de datos independientes..." -ForegroundColor Blue
+kubectl apply -f backend/ms-auth/k8s/postgres.yaml
+kubectl apply -f backend/ms-profile/k8s/postgres.yaml
+kubectl apply -f backend/ms-logistic/k8s/postgres.yaml
+kubectl apply -f backend/ms-donation/k8s/postgres.yaml
+kubectl apply -f backend/ms-inventory/k8s/postgres.yaml
 
-## Propuesta de Solución y Arquitectura
-El proyecto es una aplicación de microservicios con un BFF que centraliza la autenticación y los datos de perfil para el frontend, planteado sobre un entorno de contenedores (Docker/Kubernetes) para asegurar alta disponibilidad y escalabilidad.
+# =====================================================================
+# PASO 5: DESPLEGAR SERVIDORES, PASARELA BFF Y FRONTEND (OPCIÓN C)
+# =====================================================================
+Write-Host "⚡ Desplegando lógica de negocio (Microservicios, BFF y Frontend)..." -ForegroundColor White
+kubectl apply -f backend/ms-auth/k8s/deployment.yaml
+kubectl apply -f backend/ms-profile/k8s/deployment.yaml
+kubectl apply -f backend/ms-logistic/k8s/deployment.yaml
+kubectl apply -f backend/ms-donation/k8s/deployment.yaml
+kubectl apply -f backend/ms-inventory/k8s/deployment.yaml
+kubectl apply -f backend/bff/k8s/deployment.yaml
+kubectl apply -f ./frontend/k8s/deployment.yaml
 
-![Diagrama de Arquitectura](./docs/diagrama_sistema.jpg)
+# =====================================================================
+# PASO 6: MONITOREAR EL ARRANQUE EN TIEMPO REAL
+# =====================================================================
+Write-Host "👀 Monitoreando el estado de los pods. Espera a que todos marquen 1/1 Running..." -ForegroundColor Green
+kubectl get pods --watch
 
-### Componentes y Tecnologías
-- [Frontend](./frontend-service/): Interfaz construida con React, Vite y Tailwind CSS, servida por Nginx actuando como proxy inverso.
-- [BFF (Backend For Frontend)](./bff-service/): Gateway orquestador en Spring Boot que agrupa peticiones, centraliza la autorización con JWT y reenvía solicitudes a los servicios internos. 
-- Microservicios: Lógica de negocio dividida por responsabilidad utilizando Kotlin y Spring Boot ([auth-service](./auth-service/), [profile-service](./profile-service/), [donations-service](./donations-service/), [inventory-service](./inventory-service/) y [logistic-service](./logistic-service/)).
-- Capa de Datos y Red: Despliegues individuales de [bases de datos PostgreSQL](./docker-compose.yml#101) para garantizar la integridad transaccional (ACID), apoyados por un API Gateway (KrakenD) en despliegues completos para validación perimetral.
+# =====================================================================
+# NOTA AL FINALIZAR:
+# =====================================================================
+# Cuando la cuadrícula esté completamente estable en 1/1 Running,
+# recuerda abrir una SEGUNDA ventana de PowerShell como Administrador 
+# y ejecutar el comando para el puente de red:
+#
+# minikube tunnel
+```
 
-### Arquetipos de Arquitectura
-- Microservicios: Servicios independientes por responsabilidad con despliegue y base de datos aislados en Docker Compose.
-- BFF (Backend For Frontend): Puerta única del frontend (bff-service/) que centraliza la autorización.
+### 4. Acceder a la aplicación
 
-### Patrones de Diseño
-- JWT Authentication: Flujo stateless donde el token portador se valida en el BFF mediante JwtValidationFilter y se emite en auth-service mediante JwtService.
-- Repository Pattern: Acceso a datos abstracto a través de interfaces JpaRepository en auth-service y profile-service.
-- Strategy Pattern: Autenticación configurable mediante estrategias en auth-service (SimplePasswordStrategy y EnhancedSecurityStrategy).
-- Factory Pattern: Creación centralizada de respuestas de autenticación en auth-service.Provider / Context Pattern: Gestión de estado de sesión en React mediante AuthContext y useAuth().
+Abrir el navegador en `http://localhost`
 
-## Consideraciones éticas
-El desarrollo de Donaton conlleva una gran responsabilidad social, rigiéndose por pilares éticos:  
+### Usuarios
 
-- Integridad de datos como supervivencia: Un dato perdido puede desviar ayuda vital, por ello se utiliza PostgreSQL y su cumplimiento ACID.  
+| Usuario | Contraseña | Rol |
+|---|---|---|
+| admin | 1111 | ADMIN |
+| logistica | 2222 | LOGISTIC |
+| voluntario | 3333 | VOLUNTEER |
+| donante | 4444 | DONOR |
 
-- Seguridad y privacidad (JWT): Implementación de firmas asimétricas para proteger datos sensibles de los damnificados.  
+## Detener el sistema
 
-- Inclusión digital (a11y): La interfaz seguirá las normas WCAG para garantizar la operatividad sin barreras por personas con discapacidades visuales o motoras.
+```bash
+minikube stop
+```
 
-## Conclusión
-Esta arquitectura trasciende lo técnico para convertirse en una solución de alta responsabilidad social. Mediante el uso de tecnologías robustas y un enfoque orientado a microservicios, se garantiza una plataforma resiliente capaz de proteger la privacidad de los sectores vulnerables y liderar la gestión de emergencias con estándares éticos de vanguardia.
+## Documentación de cada microservicio
 
-Para conocer a fondo la arquitectura, patrones de diseño, endpoints y guías de despliegue local, revisa nuestro [Documento Técnico del Sistema](SISTEMA.md).
+Cada microservicio tiene su propio `README.md` con instrucciones de ejecución individual y tabla técnica detallada:
+
+- [`backend/bff/README.md`](backend/bff/README.md)
+- [`backend/ms-auth/README.md`](backend/ms-auth/README.md)
+- [`backend/ms-profile/README.md`](backend/ms-profile/README.md)
+- [`backend/ms-donation/README.md`](backend/ms-donation/README.md)
+- [`backend/ms-inventory/README.md`](backend/ms-inventory/README.md)
+- [`backend/ms-logistic/README.md`](backend/ms-logistic/README.md)
+
+## API disponible
+
+Cuando el sistema está corriendo, la documentación Swagger de cada microservicio está disponible en:
+
+| Servicio | URL |
+|---|---|
+| ms-donation | http://localhost:8083/swagger-ui.html |
+| ms-inventory | http://localhost:8084/swagger-ui.html |
+| ms-logistic | http://localhost:8085/swagger-ui.html |
+
+## Roles y accesos
+
+| Rol | Acceso |
+|---|---|
+| ADMIN | Panel general con resumen de donaciones, centros, necesidades y envíos |
+| DONOR | Historial de donaciones |
+| LOGISTIC | Inventario, necesidades y envíos |
+| VOLUNTEER | Panel de tareas de voluntariado |
+
+Todos los roles tienen acceso a la página de perfil para editar sus datos personales.

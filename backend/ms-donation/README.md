@@ -1,31 +1,48 @@
-# Donations Service
+# Donation Service
 
 ## Propósito
-Microservicio orientado a la gestión de donaciones y su persistencia.
+Microservicio de gestión de donaciones. Permite registrar, listar y actualizar el estado del ciclo de vida de cada donación.
 
-## Estado actual
-- Servicio definido como aplicación Spring Boot
-- Contiene la configuración base y puntos de entrada
-- No se han añadido controladores REST específicos en el código actual
+## Instrucciones de ejecución
 
-## Tecnologías
-- Kotlin 2.2.21
-- Spring Boot 4.0.5
-- PostgreSQL 16
-
-## Variables de entorno
-- `SPRING_DATASOURCE_URL`
-- `SPRING_DATASOURCE_DRIVER_CLASS_NAME`
-- `SPRING_DATASOURCE_USERNAME`
-- `SPRING_DATASOURCE_PASSWORD`
-
-## Ejecución
 ### Docker Compose
 ```bash
-docker compose up --build donations-service donations-db
+docker compose up --build ms-donation donation-db
 ```
 
-> Nota: este servicio usa PostgreSQL y debe levantarse junto a su base de datos mediante Docker Compose.
+### Local
+```bash
+cd backend/ms-donation
+./gradlew bootRun
+```
+> Requiere PostgreSQL corriendo en `localhost:5432` con base de datos `donation-db`.
 
-## Observaciones
-Este servicio posee una base de aplicación lista para añadir lógica de donaciones y API REST.
+## Tabla técnica
+
+| Categoría | Detalle |
+|---|---|
+| Lenguaje | Kotlin 2.2.21 |
+| Framework | Spring Boot 4.0.5 (Spring MVC + Spring Data JPA) |
+| Librerías | Flyway, PostgreSQL Driver, Jackson Kotlin, SpringDoc OpenAPI 2.5.0, Bean Validation |
+| Patrones de diseño | Layered Architecture (Controller → Service → Repository), DTO Pattern, Enum State Machine |
+
+## Variables de entorno
+
+| Variable | Descripción |
+|---|---|
+| `SPRING_DATASOURCE_URL` | URL de conexión a PostgreSQL |
+| `SPRING_DATASOURCE_USERNAME` | Usuario de base de datos |
+| `SPRING_DATASOURCE_PASSWORD` | Contraseña de base de datos |
+
+## Endpoints
+
+| Método | Ruta | Descripción |
+|---|---|---|
+| POST | `/api/donations` | Registrar nueva donación |
+| GET | `/api/donations` | Listar donaciones (filtros opcionales por centro o estado) |
+| GET | `/api/donations/{id}` | Obtener donación por ID |
+| PATCH | `/api/donations/{id}/status` | Actualizar estado de donación |
+| DELETE | `/api/donations/{id}` | Eliminar donación |
+
+## Ciclo de vida de una donación
+PENDING → RECEIVED → ASSIGNED → DELIVERED
