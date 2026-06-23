@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import {
   apiGetInventoryItems,
-  apiGetCollectionCenters,
   apiGetNeeds,
   apiGetShipments,
 } from '../../services/api';
@@ -27,13 +26,11 @@ export const LogisticDashboard = () => {
   const [shipments, setShipments] = useState<Shipment[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-
   useEffect(() => {
     const load = async () => {
       try {
-        const [inv, cen, ned, shi] = await Promise.all([
+        const [inv, ned, shi] = await Promise.all([
           apiGetInventoryItems(),
-          apiGetCollectionCenters(),
           apiGetNeeds(),
           apiGetShipments(),
         ]);

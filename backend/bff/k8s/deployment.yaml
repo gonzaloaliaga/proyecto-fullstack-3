@@ -23,12 +23,12 @@ spec:
               value: "http://ms-auth-service:8081"
             - name: SERVICES_PROFILE_URL
               value: "http://ms-profile-service:8082"
-              
-            - name: JWT_PRIVATE_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: donaton-global-secrets
-                  key: JWT_PRIVATE_KEY
+            - name: SERVICES_DONATIONS_URL
+              value: "http://ms-donation-service:8083"
+            - name: SERVICES_INVENTORY_URL
+              value: "http://ms-inventory-service:8084"
+            - name: SERVICES_LOGISTIC_URL
+              value: "http://ms-logistic-service:8085"
             - name: JWT_PUBLIC_KEY
               valueFrom:
                 secretKeyRef:
