@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ms-logistic-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ms-logistic
+  template:
+    metadata:
+      labels:
+        app: ms-logistic
+    spec:
+      initContainers:
+        - name: wait-for-logistic-db
+          image: postgres:16-alpine
+          command:
+            - sh
+            - -c
+            - "until pg_isready -h logistic-db -p 5432 -U user; do echo esperando por logistic-db; sleep 2; done;"
+      containers:
+        - name: ms-logistic
+          image: proyecto-fullstack-3-ms-logistic:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8085
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:postgresql://logistic-db:5432/logistic-db"
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: donaton-global-secrets
+                  key: DB_USER
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: donaton-global-secrets
+                  key: DB_PASSWORD
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ms-logistic-service
+spec:
+  selector:
+    app: ms-logistic
+  ports:
+    - protocol: TCP
+      port: 8085
+      targetPort: 8085
