@@ -160,7 +160,7 @@ kubectl port-forward svc/<NOMBRE_SERVICIO> <PUERTO_SERVICIO>:<PUERTO_SERVICIO>
 
 | Nombre del servicio | Comando en terminal | URL |
 |---|---|
-| bff | | kubectl port-forward svc/bff-service 8080:8080 | http://localhost:8080/swagger-ui.html |
+| bff | kubectl port-forward svc/bff-service 8080:8080 | http://localhost:8080/swagger-ui.html |
 | ms-auth | kubectl port-forward svc/ms-auth-service 8081:8081 | http://localhost:8081/swagger-ui.html |
 | ms-profile | kubectl port-forward svc/ms-profile-service 8082:8082 | http://localhost:8082/swagger-ui.html |
 | ms-donation | kubectl port-forward svc/ms-donation-service 8083:8083 | http://localhost:8083/swagger-ui.html |
