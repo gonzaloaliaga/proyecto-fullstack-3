@@ -150,15 +150,22 @@ Cada microservicio tiene su propio `README.md` con instrucciones de ejecución i
 - [`backend/ms-inventory/README.md`](backend/ms-inventory/README.md)
 - [`backend/ms-logistic/README.md`](backend/ms-logistic/README.md)
 
-## API disponible
+## Documentación de APIs en Swagger
 
-Cuando el sistema está corriendo, la documentación Swagger de cada microservicio está disponible en:
+Cuando el sistema está corriendo, la documentación Swagger de cada microservicio estará disponible al abrir una nueva terminal y escribir la siguiente línea de código:
 
-| Servicio | URL |
+```bash
+kubectl port-forward svc/<NOMBRE_SERVICIO> <PUERTO_SERVICIO>:<PUERTO_SERVICIO>
+```
+
+| Nombre del servicio | Comando en terminal | URL |
 |---|---|
-| ms-donation | http://localhost:8083/swagger-ui.html |
-| ms-inventory | http://localhost:8084/swagger-ui.html |
-| ms-logistic | http://localhost:8085/swagger-ui.html |
+| bff | | kubectl port-forward svc/bff-service 8080:8080 | http://localhost:8080/swagger-ui.html |
+| ms-auth | kubectl port-forward svc/ms-auth-service 8081:8081 | http://localhost:8081/swagger-ui.html |
+| ms-profile | kubectl port-forward svc/ms-profile-service 8082:8082 | http://localhost:8082/swagger-ui.html |
+| ms-donation | kubectl port-forward svc/ms-donation-service 8083:8083 | http://localhost:8083/swagger-ui.html |
+| ms-inventory | kubectl port-forward svc/ms-inventory-service 8084:8084 | http://localhost:8084/swagger-ui.html |
+| ms-logistic | kubectl port-forward svc/ms-logistic-service 8085:8085 | http://localhost:8085/swagger-ui.html |
 
 ## Roles y accesos
 
@@ -169,4 +176,4 @@ Cuando el sistema está corriendo, la documentación Swagger de cada microservic
 | LOGISTIC | Inventario, necesidades y envíos |
 | VOLUNTEER | Panel de tareas de voluntariado |
 
-Todos los roles tienen acceso a la página de perfil para editar sus datos personales.
+Todos los roles tienen acceso a la página de perfil para editar sus datos personales.
