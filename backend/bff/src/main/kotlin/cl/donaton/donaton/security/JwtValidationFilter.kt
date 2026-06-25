@@ -10,7 +10,11 @@ import org.springframework.web.filter.OncePerRequestFilter
 class JwtValidationFilter(private val jwtService: JwtService) : OncePerRequestFilter() {
 
     private val publicPaths = listOf(
-        "/api/auth/login"
+        "/api/auth/login",
+        "/api/swagger-ui",
+        "/api/v3/api-docs",
+        "/swagger-ui",
+        "/v3/api-docs"
     )
 
     override fun doFilterInternal(
