@@ -39,6 +39,7 @@ dependencies {
 	// Glitchtip
 	implementation("io.sentry:sentry-spring-boot-starter-jakarta:8.0.0")
 	implementation("io.sentry:sentry-logback:8.0.0")
+	implementation("org.springframework.boot:spring-boot-starter-restclient")
 }
 
 kotlin {
