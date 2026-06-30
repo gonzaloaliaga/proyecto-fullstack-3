@@ -35,6 +35,10 @@ dependencies {
 	implementation("org.apache.httpcomponents.client5:httpclient5:5.2.1")
 
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.3")
+
+	// Glitchtip
+	implementation("io.sentry:sentry-spring-boot-starter-jakarta:8.0.0")
+	implementation("io.sentry:sentry-logback:8.0.0")
 }
 
 kotlin {
