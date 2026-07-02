@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import { apiGetProfile, apiUpdateProfile } from '../../services/api';
-import type { ProfileResponse } from '../../services/api';
+import { apiGetProfile, apiUpdateProfile } from '../../services/profileService';
+import type { ProfileResponse } from '../../services/profileService';
 
 export const ProfilePage = () => {
   const { user } = useAuth();

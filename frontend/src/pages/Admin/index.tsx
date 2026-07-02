@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
-import {
-  apiGetDonations,
-  apiGetCollectionCenters,
-  apiGetNeeds,
-  apiGetShipments,
-} from '../../services/api';
-import type { Donation, CollectionCenter, Need, Shipment } from '../../services/api';
+import { apiGetDonations } from '../../services/donationService';
+import type { Donation } from '../../services/donationService';
+import { apiGetCollectionCenters } from '../../services/inventoryService';
+import type { CollectionCenter } from '../../services/inventoryService';
+import { apiGetNeeds, apiGetShipments } from '../../services/logisticService';
+import type { Need, Shipment } from '../../services/logisticService';
 
 export const AdminDashboard = () => {
   const [donations, setDonations] = useState<Donation[]>([]);

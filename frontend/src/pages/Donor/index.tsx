@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
-import { apiGetDonations, apiGetCollectionCenters } from '../../services/api';
-import type { Donation, CollectionCenter } from '../../services/api';
+import { apiGetDonations } from '../../services/donationService';
+import type { Donation } from '../../services/donationService';
+import { apiGetCollectionCenters } from '../../services/inventoryService';
+import type { CollectionCenter } from '../../services/inventoryService';
 
 const STATUS_LABELS: Record<string, string> = {
   PENDING: 'Pendiente',

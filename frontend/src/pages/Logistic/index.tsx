@@ -1,10 +1,8 @@
 import { useEffect, useState } from 'react';
-import {
-  apiGetInventoryItems,
-  apiGetNeeds,
-  apiGetShipments,
-} from '../../services/api';
-import type { InventoryItem, Need, Shipment } from '../../services/api';
+import { apiGetInventoryItems } from '../../services/inventoryService';
+import type { InventoryItem } from '../../services/inventoryService';
+import { apiGetNeeds, apiGetShipments } from '../../services/logisticService';
+import type { Need, Shipment } from '../../services/logisticService';
 
 const NEED_COLORS: Record<string, string> = {
   REPORTED: 'bg-red-100 text-red-800',
