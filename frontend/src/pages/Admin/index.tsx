@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
-import { apiGetDonations } from '../../services/donationService';
-import type { Donation } from '../../services/donationService';
+import { apiGetDonations, apiUpdateDonationStatus } from '../../services/donationService';
+import type { Donation, DonationStatus } from '../../services/donationService';
 import { apiGetCollectionCenters } from '../../services/inventoryService';
 import type { CollectionCenter } from '../../services/inventoryService';
 import { apiGetNeeds, apiGetShipments } from '../../services/logisticService';
 import type { Need, Shipment } from '../../services/logisticService';
+
+const DONATION_STATUSES: DonationStatus[] = ['PENDING', 'RECEIVED', 'ASSIGNED', 'DELIVERED'];
 
 export const AdminDashboard = () => {
   const [donations, setDonations] = useState<Donation[]>([]);
@@ -13,6 +15,7 @@ export const AdminDashboard = () => {
   const [shipments, setShipments] = useState<Shipment[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [updatingId, setUpdatingId] = useState<number | null>(null);
 
   useEffect(() => {
     const load = async () => {
@@ -36,6 +39,20 @@ export const AdminDashboard = () => {
     };
     load();
   }, []);
+
+  const handleStatusChange = async (donationId: number, newStatus: DonationStatus) => {
+    setUpdatingId(donationId);
+    setError('');
+    try {
+      const updated = await apiUpdateDonationStatus(donationId, newStatus);
+      setDonations(prev => prev.map(d => (d.id === donationId ? updated : d)));
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Error al actualizar el estado.';
+      setError(msg);
+    } finally {
+      setUpdatingId(null);
+    }
+  };
 
   if (loading) {
     return (
@@ -114,7 +131,16 @@ export const AdminDashboard = () => {
                   <td className="px-6 py-3 text-gray-600">{d.origin}</td>
                   <td className="px-6 py-3 text-gray-600">{d.donationDate}</td>
                   <td className="px-6 py-3">
-                    <StatusBadge status={d.status} />
+                    <select
+                      value={d.status}
+                      onChange={(e) => handleStatusChange(d.id, e.target.value as DonationStatus)}
+                      disabled={updatingId === d.id}
+                      className={`text-xs font-semibold rounded-full px-2 py-1 border-0 outline-none cursor-pointer ${STATUS_MAP[d.status]?.cls ?? 'bg-gray-100 text-gray-600'}`}
+                    >
+                      {DONATION_STATUSES.map(s => (
+                        <option key={s} value={s}>{STATUS_MAP[s].label}</option>
+                      ))}
+                    </select>
                   </td>
                 </tr>
               ))}
@@ -193,11 +219,6 @@ const NEED_MAP: Record<string, { label: string; cls: string }> = {
   IN_PROGRESS: { label: 'En curso',    cls: 'bg-yellow-100 text-yellow-800' },
   COVERED:     { label: 'Cubierta',    cls: 'bg-green-100 text-green-800' },
   CANCELLED:   { label: 'Cancelada',   cls: 'bg-gray-100 text-gray-600' },
-};
-
-const StatusBadge = ({ status }: { status: string }) => {
-  const { label, cls } = STATUS_MAP[status] ?? { label: status, cls: 'bg-gray-100 text-gray-600' };
-  return <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${cls}`}>{label}</span>;
 };
 
 const NeedBadge = ({ status }: { status: string }) => {

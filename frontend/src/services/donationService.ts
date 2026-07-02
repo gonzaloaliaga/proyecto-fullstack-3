@@ -1,7 +1,7 @@
 import { API, apiFetch, authHeaders, throwIfError } from './httpClient';
- 
+
 export type DonationStatus = 'PENDING' | 'RECEIVED' | 'ASSIGNED' | 'DELIVERED';
- 
+
 export interface Donation {
   id: number;
   resource: string;
@@ -11,7 +11,7 @@ export interface Donation {
   collectionCenterId: number;
   status: DonationStatus;
 }
- 
+
 export interface CreateDonationRequest {
   resource: string;
   quantity: number;
@@ -19,7 +19,7 @@ export interface CreateDonationRequest {
   donationDate: string;
   collectionCenterId: number;
 }
- 
+
 export async function apiGetDonations(): Promise<Donation[]> {
   const res = await apiFetch(`${API}/donations`, {
     headers: authHeaders(),
@@ -27,12 +27,25 @@ export async function apiGetDonations(): Promise<Donation[]> {
   await throwIfError(res);
   return res.json();
 }
- 
+
 export async function apiCreateDonation(data: CreateDonationRequest): Promise<Donation> {
   const res = await apiFetch(`${API}/donations`, {
     method: 'POST',
     headers: authHeaders(),
     body: JSON.stringify(data),
+  });
+  await throwIfError(res);
+  return res.json();
+}
+
+export async function apiUpdateDonationStatus(
+  id: number,
+  status: DonationStatus
+): Promise<Donation> {
+  const res = await apiFetch(`${API}/donations/${id}/status`, {
+    method: 'PATCH',
+    headers: authHeaders(),
+    body: JSON.stringify({ status }),
   });
   await throwIfError(res);
   return res.json();

@@ -8,6 +8,7 @@ interface AuthContextProps {
   isAuthenticated: boolean;
   login: (userData: User, token: string) => void;
   logout: () => void;
+  updateUsername: (newUsername: string) => void;
 }
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
@@ -25,12 +26,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     clearSession();
   };
 
+  const updateUsername = (newUsername: string) => {
+    setUser(prev => {
+      if (!prev) return prev;
+      const updated = { ...prev, username: newUsername };
+      const token = localStorage.getItem('donaton_token');
+      if (token) saveSession(updated, token);
+      return updated;
+    });
+  };
+
   return (
     <AuthContext.Provider value={{
       user,
       isAuthenticated: !!user,
       login,
-      logout
+      logout,
+      updateUsername
     }}>
       {children}
     </AuthContext.Provider>
