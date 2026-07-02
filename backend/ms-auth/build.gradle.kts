@@ -27,6 +27,10 @@ dependencies {
 
 	compileOnly("org.projectlombok:lombok")
 
+	// Sentry SDK (compatible con GlitchTip)
+	implementation("io.sentry:sentry-spring-boot-starter-jakarta:8.10.0")
+
+
 	// runtimeOnly("org.postgresql:postgresql")
 
 	// DB EN MEMORIA SOLO DESARROLLO

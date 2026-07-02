@@ -36,10 +36,8 @@ dependencies {
 
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.3")
 
-	// Glitchtip
-	implementation("io.sentry:sentry-spring-boot-starter-jakarta:8.0.0")
-	implementation("io.sentry:sentry-logback:8.0.0")
-	implementation("org.springframework.boot:spring-boot-starter-restclient")
+	// Sentry SDK compatible con GlitchTip
+	implementation("io.sentry:sentry-spring-boot-starter-jakarta:8.10.0")
 }
 
 kotlin {

@@ -1,7 +1,11 @@
 services:
 
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      args:
+        - VITE_SENTRY_DSN=${SENTRY_DSN_FRONTEND}
+        - VITE_SENTRY_ENVIRONMENT=${SENTRY_ENVIRONMENT:-development}
     container_name: frontend
     ports:
       - "5173:80"
@@ -30,6 +34,8 @@ services:
       - SERVICES_DONATIONS_URL=http://ms-donation:8083
       - SERVICES_INVENTORY_URL=http://ms-inventory:8084
       - SERVICES_LOGISTIC_URL=http://ms-logistic:8085
+      - SENTRY_DSN=${SENTRY_DSN_BFF}
+      - SENTRY_ENVIRONMENT=${SENTRY_ENVIRONMENT:-development}
 
   ms-auth:
     build: ./backend/ms-auth
@@ -48,6 +54,8 @@ services:
       - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
       - SPRING_DATASOURCE_USERNAME=user
       - SPRING_DATASOURCE_PASSWORD=password
+      - SENTRY_DSN=${SENTRY_DSN_AUTH}
+      - SENTRY_ENVIRONMENT=${SENTRY_ENVIRONMENT:-development}
 
   ms-profile:
     build: ./backend/ms-profile
@@ -64,6 +72,8 @@ services:
       - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
       - SPRING_DATASOURCE_USERNAME=user
       - SPRING_DATASOURCE_PASSWORD=password
+      - SENTRY_DSN=${SENTRY_DSN_PROFILE}
+      - SENTRY_ENVIRONMENT=${SENTRY_ENVIRONMENT:-development}
 
   ms-donation:
     build: ./backend/ms-donation
@@ -80,6 +90,8 @@ services:
       - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
       - SPRING_DATASOURCE_USERNAME=user
       - SPRING_DATASOURCE_PASSWORD=password
+      - SENTRY_DSN=${SENTRY_DSN_DONATION}
+      - SENTRY_ENVIRONMENT=${SENTRY_ENVIRONMENT:-development}
 
   ms-inventory:
     build: ./backend/ms-inventory
@@ -96,6 +108,8 @@ services:
       - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
       - SPRING_DATASOURCE_USERNAME=user
       - SPRING_DATASOURCE_PASSWORD=password
+      - SENTRY_DSN=${SENTRY_DSN_INVENTORY}
+      - SENTRY_ENVIRONMENT=${SENTRY_ENVIRONMENT:-development}
 
   ms-logistic:
     build: ./backend/ms-logistic
@@ -112,6 +126,8 @@ services:
       - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
       - SPRING_DATASOURCE_USERNAME=user
       - SPRING_DATASOURCE_PASSWORD=password
+      - SENTRY_DSN=${SENTRY_DSN_LOGISTIC}
+      - SENTRY_ENVIRONMENT=${SENTRY_ENVIRONMENT:-development}
 
 # ==============
 # BASES DE DATOS
