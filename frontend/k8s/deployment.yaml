@@ -65,6 +65,7 @@ metadata:
   labels:
     app: donaton-frontend
 spec:
+  type: LoadBalancer
   selector:
     app: donaton-frontend
   ports:
