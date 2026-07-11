@@ -21,7 +21,7 @@ spec:
             - "until pg_isready -h auth-db -p 5432 -U user; do echo esperando por auth-db; sleep 2; done;"
       containers:
         - name: ms-auth
-          image: proyecto-fullstack-3-ms-auth:latest
+          image: 286145214430.dkr.ecr.us-east-1.amazonaws.com/donaton-ms-auth:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8081

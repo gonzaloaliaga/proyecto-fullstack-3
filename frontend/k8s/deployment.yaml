@@ -45,7 +45,7 @@ spec:
     spec:
       containers:
       - name: frontend-app
-        image: proyecto-fullstack-3-frontend:latest
+        image: 286145214430.dkr.ecr.us-east-1.amazonaws.com/donaton-frontend:latest
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 80
