@@ -3,7 +3,7 @@ name: Deploy Donaton to EKS
 on:
   push:
     branches:
-      - feature/025-Connect-AWSw
+      - feature/025-Connect-AWS
 
 jobs:
   build-and-deploy:
